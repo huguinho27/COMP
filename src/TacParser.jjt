@@ -21,8 +21,14 @@ public class TacParser
     System.out.println("Reading from file " + args [0]);
     TacParser tacParser = new TacParser(new FileInputStream(args [0]));
     SimpleNode root = tacParser.Expression();
+    function(root);
+  }
+
+  public static void function(SimpleNode root)
+  {
     root.dump("");
   }
+
 }
 
 PARSER_END(TacParser)
@@ -90,9 +96,10 @@ void ExprNumber() #void :
 {
   t = < NUMBER > | < VARIABLE >
   {
-  //jjtThis.val = sign * Integer.parseInt(t.image);
+    
   }
-  #Term
+  //#Term
+  #t
 }
 
 void ExprVariable() #void :
