@@ -3,27 +3,19 @@ public interface TacParserTreeConstants
 {
   public int JJTEXPRESSION = 0;
   public int JJTASSIGN = 1;
-  public int JJTVOID = 2;
-  public int JJTADD = 3;
-  public int JJTSUB = 4;
-  public int JJTMUL = 5;
-  public int JJTDIV = 6;
-  public int JJTT = 7;
-  public int JJTVARIABLE = 8;
-  public int JJTNUMBER = 9;
+  public int JJTOPER = 2;
+  public int JJTVOID = 3;
+  public int JJTTERM = 4;
+  public int JJTVARIABLE = 5;
+
 
   public String[] jjtNodeName = {
     "Expression",
     "Assign",
+    "Oper",
     "void",
-    "Add",
-    "Sub",
-    "Mul",
-    "Div",
-    "t",
+    "Term",
     "Variable",
-    "Number",
-    
   };
 }
-/* JavaCC - OriginalChecksum=ec1fd19d81868fc2f2d8475a1d5c5dbe (do not edit this line) */
+/* JavaCC - OriginalChecksum=38bc413ca6909087227fa239def2c94e (do not edit this line) */

@@ -22,13 +22,16 @@ public class TacParser
     TacParser tacParser = new TacParser(new FileInputStream(args [0]));
     SimpleNode root = tacParser.Expression();
     function(root);
+    System.out.println("\nRegister Allocation:");
+    LifetimeAnalysis lf = new LifetimeAnalysis();
+    lf.parseNode(root);
+    lf.printLifetime(root);
   }
 
   public static void function(SimpleNode root)
   {
     root.dump("");
   }
-
 }
 
 PARSER_END(TacParser)
@@ -70,36 +73,43 @@ SimpleNode Expression() :
 
 void Expr1() #Assign :
 {
+  Token t;
 }
 {
-  ExprVariable() < ASSIGN > Expr2()
+  ExprVariable() t = < ASSIGN > Expr2()
+  {
+    jjtThis.jjtSetValue(t.image);
+  }
 }
 
-void Expr2() #void :
-{} //a anotaÁ„o ì#voidî instrui a ferramenta para n„o gerar nÛs para a regra
+void Expr2() #Oper :
 {
-  ExprNumber()
-  [
-    (
-      "+" ExprNumber() #Add(2) // a anotaÁ„o gera um nÛ chamado Add se tiver 2 nÛs filhos
-  | "-" ExprNumber() #Sub(2)
-| "*" ExprNumber() #Mul(2)
-| "/" ExprNumber() #Div(2)
-)
-]
+  Token t;
+} //a anota√ß√£o ‚Äú#void‚Äù instrui a ferramenta para n√£o gerar n√≥s para a regra
+{
+  ExprTerm()
+  (
+    t = < PLUS >
+  | t = < SUBT >
+  | t = < MULT >
+  | t = < DIV >
+  )
+  ExprTerm()
+  {
+    jjtThis.jjtSetValue(t.image);
+  }
 }
 
-void ExprNumber() #void :
+void ExprTerm() #void :
 {
   Token t;
 }
 {
-  t = < NUMBER > | < VARIABLE >
+  t = < NUMBER > | t = < VARIABLE >
   {
-    
+    jjtThis.jjtSetValue(t.image);
   }
-  //#Term
-  #t
+  #Term
 }
 
 void ExprVariable() #void :
@@ -109,6 +119,7 @@ void ExprVariable() #void :
 {
   t = < VARIABLE >
   {
+    jjtThis.jjtSetValue(t.image);
   }
   #Variable
 }

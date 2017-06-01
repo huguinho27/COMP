@@ -2,6 +2,7 @@
 /*@egen*/options
 {
   LOOKAHEAD= 1;
+  // NODE_SCOPE_HOOK = true;
 
 }
 
@@ -26,13 +27,16 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants/*@egen*
     TacParser tacParser = new TacParser(new FileInputStream(args [0]));
     SimpleNode root = tacParser.Expression();
     function(root);
+    System.out.println("\nRegister Allocation:");
+    LifetimeAnalysis lf = new LifetimeAnalysis();
+    lf.parseNode(root);
+    lf.printLifetime(root);
   }
 
   public static void function(SimpleNode root)
   {
     root.dump("");
   }
-
 }
 
 PARSER_END(TacParser)
@@ -109,11 +113,20 @@ void Expr1()         :
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/
+  Token t;
 }
 {/*@bgen(jjtree) Assign */
   try {
 /*@egen*/
-  ExprVariable() < ASSIGN > Expr2()/*@bgen(jjtree)*/
+  ExprVariable() t = < ASSIGN > Expr2()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    jjtn000.jjtSetValue(t.image);
+  }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -137,135 +150,62 @@ void Expr1()         :
 }
 
 void Expr2()       :
-{} //a anota\u00e7\u00e3o \u201c#void\u201d instrui a ferramenta para n\u00e3o gerar n\u00f3s para a regra
-{
-  ExprNumber()
-  [
-    (
-      "+"/*@bgen(jjtree) #Add( 2) */
-          {
-            SimpleNode jjtn001 = new SimpleNode(JJTADD);
-            boolean jjtc001 = true;
-            jjtree.openNodeScope(jjtn001);
-          }
-          try {
-/*@egen*/ ExprNumber()/*@bgen(jjtree)*/
-          } catch (Throwable jjte001) {
-            if (jjtc001) {
-              jjtree.clearNodeScope(jjtn001);
-              jjtc001 = false;
-            } else {
-              jjtree.popNode();
-            }
-            if (jjte001 instanceof RuntimeException) {
-              throw (RuntimeException)jjte001;
-            }
-            if (jjte001 instanceof ParseException) {
-              throw (ParseException)jjte001;
-            }
-            throw (Error)jjte001;
-          } finally {
-            if (jjtc001) {
-              jjtree.closeNodeScope(jjtn001,  2);
-            }
-          }
-/*@egen*/         // a anota\u00e7\u00e3o gera um n\u00f3 chamado Add se tiver 2 n\u00f3s filhos
-  | "-"/*@bgen(jjtree) #Sub( 2) */
-        {
-          SimpleNode jjtn002 = new SimpleNode(JJTSUB);
-          boolean jjtc002 = true;
-          jjtree.openNodeScope(jjtn002);
-        }
-        try {
-/*@egen*/ ExprNumber()/*@bgen(jjtree)*/
-        } catch (Throwable jjte002) {
-          if (jjtc002) {
-            jjtree.clearNodeScope(jjtn002);
-            jjtc002 = false;
-          } else {
-            jjtree.popNode();
-          }
-          if (jjte002 instanceof RuntimeException) {
-            throw (RuntimeException)jjte002;
-          }
-          if (jjte002 instanceof ParseException) {
-            throw (ParseException)jjte002;
-          }
-          throw (Error)jjte002;
-        } finally {
-          if (jjtc002) {
-            jjtree.closeNodeScope(jjtn002,  2);
-          }
-        }
-/*@egen*/        
-| "*"/*@bgen(jjtree) #Mul( 2) */
-      {
-        SimpleNode jjtn003 = new SimpleNode(JJTMUL);
-        boolean jjtc003 = true;
-        jjtree.openNodeScope(jjtn003);
-      }
-      try {
-/*@egen*/ ExprNumber()/*@bgen(jjtree)*/
-      } catch (Throwable jjte003) {
-        if (jjtc003) {
-          jjtree.clearNodeScope(jjtn003);
-          jjtc003 = false;
-        } else {
-          jjtree.popNode();
-        }
-        if (jjte003 instanceof RuntimeException) {
-          throw (RuntimeException)jjte003;
-        }
-        if (jjte003 instanceof ParseException) {
-          throw (ParseException)jjte003;
-        }
-        throw (Error)jjte003;
-      } finally {
-        if (jjtc003) {
-          jjtree.closeNodeScope(jjtn003,  2);
-        }
-      }
-/*@egen*/        
-| "/"/*@bgen(jjtree) #Div( 2) */
-      {
-        SimpleNode jjtn004 = new SimpleNode(JJTDIV);
-        boolean jjtc004 = true;
-        jjtree.openNodeScope(jjtn004);
-      }
-      try {
-/*@egen*/ ExprNumber()/*@bgen(jjtree)*/
-      } catch (Throwable jjte004) {
-        if (jjtc004) {
-          jjtree.clearNodeScope(jjtn004);
-          jjtc004 = false;
-        } else {
-          jjtree.popNode();
-        }
-        if (jjte004 instanceof RuntimeException) {
-          throw (RuntimeException)jjte004;
-        }
-        if (jjte004 instanceof ParseException) {
-          throw (ParseException)jjte004;
-        }
-        throw (Error)jjte004;
-      } finally {
-        if (jjtc004) {
-          jjtree.closeNodeScope(jjtn004,  2);
-        }
-      }
-/*@egen*/        
-)
-]
+{/*@bgen(jjtree) Oper */
+  SimpleNode jjtn000 = new SimpleNode(JJTOPER);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+  Token t;
+} //a anota\u00c3\u00a7\u00c3\u00a3o \u00e2\u20ac\u0153#void\u00e2\u20ac\ufffd instrui a ferramenta para n\u00c3\u00a3o gerar n\u00c3\u00b3s para a regra
+{/*@bgen(jjtree) Oper */
+  try {
+/*@egen*/
+  ExprTerm()
+  (
+    t = < PLUS >
+  | t = < SUBT >
+  | t = < MULT >
+  | t = < DIV >
+  )
+  ExprTerm()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    jjtn000.jjtSetValue(t.image);
+  }/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
 }
 
-void ExprNumber()       :
+void ExprTerm()       :
 {
   Token t;
 }
 {
-  t = < NUMBER > | < VARIABLE >/*@bgen(jjtree) t */
+  t = < NUMBER > | t = < VARIABLE >/*@bgen(jjtree) Term */
   {
-    SimpleNode jjtn001 = new SimpleNode(JJTT);
+    SimpleNode jjtn001 = new SimpleNode(JJTTERM);
     boolean jjtc001 = true;
     jjtree.openNodeScope(jjtn001);
   }
@@ -277,7 +217,7 @@ void ExprNumber()       :
   }
 /*@egen*/
   {
-    
+    jjtn001.jjtSetValue(t.image);
   }/*@bgen(jjtree)*/
   } finally {
     if (jjtc001) {
@@ -285,8 +225,7 @@ void ExprNumber()       :
     }
   }
 /*@egen*/
-         
-    
+       
 }
 
 void ExprVariable()       :
@@ -308,6 +247,7 @@ void ExprVariable()       :
   }
 /*@egen*/
   {
+    jjtn001.jjtSetValue(t.image);
   }/*@bgen(jjtree)*/
   } finally {
     if (jjtc001) {
