@@ -58,7 +58,7 @@ TOKEN :
 {
    < IF : "if" >
 |    < GOTO : "goto" >
-|  < NUMBER : ([ "0"-"9" ])+ >
+|  < NUMBER : "0" >
 | < VARIABLE : ([ "a"-"z", "A"-"Z" ])+ ([ "0"-"9" ])* >
 
 }
@@ -67,7 +67,8 @@ SimpleNode Expression() :
 {}
 {
   (
-    (LOOKAHEAD(2)       ExprPoint() "-")? (Expr1() | ExprIf() | ExprGoto())
+    (LOOKAHEAD(2) 
+      ExprPoint() "-")? (Expr1() | ExprIf() | ExprGoto())
   )+
   < EOF >
   {
@@ -163,8 +164,10 @@ void ExprTerm() #void :
   Token t;
 }
 {
-  t = < NUMBER > | t = < VARIABLE >
+ (
+    t = < NUMBER > | t = < VARIABLE >)
   {
+    System.out.println(t.image);
     jjtThis.jjtSetValue(t.image);
   }
   #Term
