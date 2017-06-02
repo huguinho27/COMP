@@ -51,19 +51,23 @@ TOKEN :
 | < SUBT : "-" >
 | < MULT : "*" >
 | < DIV : "/" >
+| < LESSER : "<">
 }
 
 TOKEN :
 {
-  < NUMBER : ([ "0"-"9" ])+ >
+   < IF : "if" >
+|    < GOTO : "goto" >
+|  < NUMBER : ([ "0"-"9" ])+ >
 | < VARIABLE : ([ "a"-"z", "A"-"Z" ])+ ([ "0"-"9" ])* >
+
 }
 
 SimpleNode Expression() :
 {}
 {
   (
-    Expr1()
+    (LOOKAHEAD(2)       ExprPoint() "-")? (Expr1() | ExprIf() | ExprGoto())
   )+
   < EOF >
   {
@@ -71,12 +75,66 @@ SimpleNode Expression() :
   }
 }
 
+void ExprPoint() #Point :
+{
+  Token t;
+}
+{
+  t = < VARIABLE >
+  {
+    
+    jjtThis.jjtSetValue(t.image);
+  }
+}
+
+void ExprIf() #If :
+{
+  Token t;
+}
+{
+  t = < IF >  ExprCompare() ExprGoto()
+  {
+    
+    jjtThis.jjtSetValue(t.image);
+  }
+}
+
+void ExprGoto() #Goto :
+{
+  Token t;
+}
+{
+  t = < GOTO > ExprVariable()
+  
+  {
+    jjtThis.jjtSetValue(t.image);
+  }
+  
+}
+
+void ExprCompare() #Compare :
+{
+  Token t;
+}
+{
+ ExprTerm() t = < LESSER > ExprTerm()
+  
+  {
+    jjtThis.jjtSetValue(t.image);
+  }
+  
+}
+
+
+
+
+
 void Expr1() #Assign :
 {
   Token t;
 }
 {
-  ExprVariable() t = < ASSIGN > Expr2()
+  ExprVariable() t = < ASSIGN > ( LOOKAHEAD(2) Expr2() | ExprTerm())
   {
     jjtThis.jjtSetValue(t.image);
   }
@@ -85,7 +143,7 @@ void Expr1() #Assign :
 void Expr2() #Oper :
 {
   Token t;
-} //a anota√ß√£o ‚Äú#void‚Äù instrui a ferramenta para n√£o gerar n√≥s para a regra
+} //a anotaÁ„o ì#voidî instrui a ferramenta para n„o gerar nÛs para a regra
 {
   ExprTerm()
   (
