@@ -12,13 +12,14 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
       System.exit(1);
     }
     System.out.println("Reading from file " + "input2.txt");
-    TacParser tacParser = new TacParser(new FileInputStream("C:\u005c\u005cUsers\u005c\u005cmaster\u005c\u005cDesktop\u005c\u005cCOMP\u005c\u005csrc\u005c\u005cinput2.txt"));
+    TacParser tacParser = new TacParser(new FileInputStream(args [0]));
     SimpleNode root = tacParser.Expression();
     function(root);
     System.out.println("\u005cnRegister Allocation:");
-    lifetimeAnalysis lf = new lifetimeAnalysis(8);
+    LifetimeAnalysis lf = new LifetimeAnalysis(8);
     lf.parseNode(root);
     lf.printLifetime(root);
+    lf.printLifetimeGraph(root);
   }
 
   public static void function(SimpleNode root)
@@ -187,23 +188,23 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     jjtc000 = false;
     jjtn000.jjtSetValue(t.image);
     } catch (Throwable jjte000) {
-   if (jjtc000) {
-     jjtree.clearNodeScope(jjtn000);
-     jjtc000 = false;
-   } else {
-     jjtree.popNode();
-   }
-   if (jjte000 instanceof RuntimeException) {
-     {if (true) throw (RuntimeException)jjte000;}
-   }
-   if (jjte000 instanceof ParseException) {
-     {if (true) throw (ParseException)jjte000;}
-   }
-   {if (true) throw (Error)jjte000;}
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
     } finally {
-   if (jjtc000) {
-     jjtree.closeNodeScope(jjtn000, true);
-   }
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
     }
   }
 
@@ -363,6 +364,21 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3_2() {
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_4() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(13)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(14)) return true;
+    }
+    return false;
+  }
+
   static private boolean jj_3R_2() {
     if (jj_scan_token(VARIABLE)) return true;
     return false;
@@ -387,21 +403,6 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     if (jj_scan_token(9)) return true;
     }
     }
-    }
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_3()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_4() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(13)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(14)) return true;
     }
     return false;
   }

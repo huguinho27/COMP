@@ -47,7 +47,7 @@ public interface TacParserConstants {
     "\"<\"",
     "\"if\"",
     "\"goto\"",
-    "\"0\"",
+    "<NUMBER>",
     "<VARIABLE>",
   };
 
