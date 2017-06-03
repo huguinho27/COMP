@@ -19,9 +19,15 @@ public interface TacParserConstants {
   /** RegularExpression Id. */
   int DIV = 9;
   /** RegularExpression Id. */
-  int NUMBER = 10;
+  int LESSER = 10;
   /** RegularExpression Id. */
-  int VARIABLE = 11;
+  int IF = 11;
+  /** RegularExpression Id. */
+  int GOTO = 12;
+  /** RegularExpression Id. */
+  int NUMBER = 13;
+  /** RegularExpression Id. */
+  int VARIABLE = 14;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -38,7 +44,10 @@ public interface TacParserConstants {
     "\"-\"",
     "\"*\"",
     "\"/\"",
-    "<NUMBER>",
+    "\"<\"",
+    "\"if\"",
+    "\"goto\"",
+    "\"0\"",
     "<VARIABLE>",
   };
 

@@ -18,12 +18,12 @@ public class TacParser
       System.out.println("Please pass in the filename for a parameter.");
       System.exit(1);
     }
-    System.out.println("Reading from file " + args [0]);
-    TacParser tacParser = new TacParser(new FileInputStream(args [0]));
+    System.out.println("Reading from file " + "input2.txt");
+    TacParser tacParser = new TacParser(new FileInputStream("C:\\Users\\master\\Desktop\\COMP\\src\\input2.txt"));
     SimpleNode root = tacParser.Expression();
     function(root);
     System.out.println("\nRegister Allocation:");
-    LifetimeAnalysis lf = new LifetimeAnalysis();
+    lifetimeAnalysis lf = new lifetimeAnalysis(8);
     lf.parseNode(root);
     lf.printLifetime(root);
   }

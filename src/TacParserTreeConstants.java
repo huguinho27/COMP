@@ -2,15 +2,23 @@
 public interface TacParserTreeConstants
 {
   public int JJTEXPRESSION = 0;
-  public int JJTASSIGN = 1;
-  public int JJTOPER = 2;
-  public int JJTVOID = 3;
-  public int JJTTERM = 4;
-  public int JJTVARIABLE = 5;
+  public int JJTPOINT = 1;
+  public int JJTIF = 2;
+  public int JJTGOTO = 3;
+  public int JJTCOMPARE = 4;
+  public int JJTASSIGN = 5;
+  public int JJTOPER = 6;
+  public int JJTVOID = 7;
+  public int JJTTERM = 8;
+  public int JJTVARIABLE = 9;
 
 
   public String[] jjtNodeName = {
     "Expression",
+    "Point",
+    "If",
+    "Goto",
+    "Compare",
     "Assign",
     "Oper",
     "void",
@@ -18,4 +26,4 @@ public interface TacParserTreeConstants
     "Variable",
   };
 }
-/* JavaCC - OriginalChecksum=38bc413ca6909087227fa239def2c94e (do not edit this line) */
+/* JavaCC - OriginalChecksum=8af34b1ca5e2628dea31e72539d6c20f (do not edit this line) */

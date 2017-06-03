@@ -3,7 +3,7 @@
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class TacParser/* @bgen(jjtree) */ implements TacParserTreeConstants,
+public class TacParser_old implements TacParserTreeConstants,
 		TacParserConstants {/* @bgen(jjtree) */
 	protected static JJTTacParserState jjtree = new JJTTacParserState();
 
@@ -13,12 +13,12 @@ public class TacParser/* @bgen(jjtree) */ implements TacParserTreeConstants,
 			System.exit(1);
 		}
 		System.out.println("Reading from file " + args[0]);
-		TacParser tacParser = new TacParser(new FileInputStream(args[0]));
+		TacParser_old tacParser = new TacParser_old(new FileInputStream(args[0]));
 		SimpleNode root = tacParser.Expression();
 		function(root);
 		
 		System.out.println("\u005cnRegister Allocation:");
-		LifetimeAnalysis lf = new LifetimeAnalysis(8);
+		lifetimeAnalysis lf = new lifetimeAnalysis(8);
 		lf.parseNode(root);
 		lf.printLifetime(root);
 		lf.printLifetimeGraph(root);
@@ -264,12 +264,12 @@ public class TacParser/* @bgen(jjtree) */ implements TacParserTreeConstants,
 	}
 
 	/** Constructor with InputStream. */
-	public TacParser(java.io.InputStream stream) {
+	public TacParser_old(java.io.InputStream stream) {
 		this(stream, null);
 	}
 
 	/** Constructor with InputStream and supplied encoding */
-	public TacParser(java.io.InputStream stream, String encoding) {
+	public TacParser_old(java.io.InputStream stream, String encoding) {
 		if (jj_initialized_once) {
 			System.out.println("ERROR: Second call to constructor of static parser.  ");
 			System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
@@ -312,7 +312,7 @@ public class TacParser/* @bgen(jjtree) */ implements TacParserTreeConstants,
 	}
 
 	/** Constructor. */
-	public TacParser(java.io.Reader stream) {
+	public TacParser_old(java.io.Reader stream) {
 		if (jj_initialized_once) {
 			System.out.println("ERROR: Second call to constructor of static parser. ");
 			System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
@@ -342,7 +342,7 @@ public class TacParser/* @bgen(jjtree) */ implements TacParserTreeConstants,
 	}
 
 	/** Constructor with generated Token Manager. */
-	public TacParser(TacParserTokenManager tm) {
+	public TacParser_old(TacParserTokenManager tm) {
 		if (jj_initialized_once) {
 			System.out.println("ERROR: Second call to constructor of static parser. ");
 			System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");

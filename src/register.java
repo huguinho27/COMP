@@ -1,9 +1,9 @@
-public class Register
+public class register
 {
 	private String varName;
 	private int lifetime = 1;
 	
-	public Register(String varName)
+	public register(String varName)
 	{
 		this.varName = varName;
 	}

@@ -2,7 +2,6 @@
 /*@egen*/options
 {
   LOOKAHEAD= 1;
-  // NODE_SCOPE_HOOK = true;
 
 }
 
@@ -23,12 +22,12 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants/*@egen*
       System.out.println("Please pass in the filename for a parameter.");
       System.exit(1);
     }
-    System.out.println("Reading from file " + args [0]);
-    TacParser tacParser = new TacParser(new FileInputStream(args [0]));
+    System.out.println("Reading from file " + "input2.txt");
+    TacParser tacParser = new TacParser(new FileInputStream("C:\\Users\\master\\Desktop\\COMP\\src\\input2.txt"));
     SimpleNode root = tacParser.Expression();
     function(root);
     System.out.println("\nRegister Allocation:");
-    LifetimeAnalysis lf = new LifetimeAnalysis();
+    lifetimeAnalysis lf = new lifetimeAnalysis(8);
     lf.parseNode(root);
     lf.printLifetime(root);
   }
@@ -56,12 +55,16 @@ TOKEN :
 | < SUBT : "-" >
 | < MULT : "*" >
 | < DIV : "/" >
+| < LESSER : "<">
 }
 
 TOKEN :
 {
-  < NUMBER : ([ "0"-"9" ])+ >
+   < IF : "if" >
+|    < GOTO : "goto" >
+|  < NUMBER : "0" >
 | < VARIABLE : ([ "a"-"z", "A"-"Z" ])+ ([ "0"-"9" ])* >
+
 }
 
 SimpleNode Expression() :
@@ -74,7 +77,8 @@ SimpleNode Expression() :
   try {
 /*@egen*/
   (
-    Expr1()
+    (LOOKAHEAD(2) 
+      ExprPoint() "-")? (Expr1() | ExprIf() | ExprGoto())
   )+
   < EOF >/*@bgen(jjtree)*/
   {
@@ -107,6 +111,170 @@ SimpleNode Expression() :
 /*@egen*/
 }
 
+void ExprPoint()        :
+{/*@bgen(jjtree) Point */
+  SimpleNode jjtn000 = new SimpleNode(JJTPOINT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+  Token t;
+}
+{/*@bgen(jjtree) Point */
+  try {
+/*@egen*/
+  t = < VARIABLE >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    
+    jjtn000.jjtSetValue(t.image);
+  }/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}
+
+void ExprIf()     :
+{/*@bgen(jjtree) If */
+  SimpleNode jjtn000 = new SimpleNode(JJTIF);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+  Token t;
+}
+{/*@bgen(jjtree) If */
+  try {
+/*@egen*/
+  t = < IF >  ExprCompare() ExprGoto()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  {
+    
+    jjtn000.jjtSetValue(t.image);
+  }/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}
+
+void ExprGoto()       :
+{/*@bgen(jjtree) Goto */
+  SimpleNode jjtn000 = new SimpleNode(JJTGOTO);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+  Token t;
+}
+{/*@bgen(jjtree) Goto */
+  try {
+/*@egen*/
+  t = < GOTO > ExprVariable()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  
+  {
+    jjtn000.jjtSetValue(t.image);
+  }/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+  
+}
+
+void ExprCompare()          :
+{/*@bgen(jjtree) Compare */
+  SimpleNode jjtn000 = new SimpleNode(JJTCOMPARE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+  Token t;
+}
+{/*@bgen(jjtree) Compare */
+ try {
+/*@egen*/
+ ExprTerm() t = < LESSER > ExprTerm()/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+  
+  {
+    jjtn000.jjtSetValue(t.image);
+  }/*@bgen(jjtree)*/
+ } catch (Throwable jjte000) {
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     throw (RuntimeException)jjte000;
+   }
+   if (jjte000 instanceof ParseException) {
+     throw (ParseException)jjte000;
+   }
+   throw (Error)jjte000;
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
+/*@egen*/
+  
+}
+
+
+
+
+
 void Expr1()         :
 {/*@bgen(jjtree) Assign */
   SimpleNode jjtn000 = new SimpleNode(JJTASSIGN);
@@ -118,7 +286,7 @@ void Expr1()         :
 {/*@bgen(jjtree) Assign */
   try {
 /*@egen*/
-  ExprVariable() t = < ASSIGN > Expr2()/*@bgen(jjtree)*/
+  ExprVariable() t = < ASSIGN > ( LOOKAHEAD(2) Expr2() | ExprTerm())/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -156,7 +324,7 @@ void Expr2()       :
   jjtree.openNodeScope(jjtn000);
 /*@egen*/
   Token t;
-} //a anota\u00c3\u00a7\u00c3\u00a3o \u00e2\u20ac\u0153#void\u00e2\u20ac\ufffd instrui a ferramenta para n\u00c3\u00a3o gerar n\u00c3\u00b3s para a regra
+} //a anota\u00e7\u00e3o \u201c#void\u201d instrui a ferramenta para n\u00e3o gerar n\u00f3s para a regra
 {/*@bgen(jjtree) Oper */
   try {
 /*@egen*/
@@ -203,7 +371,8 @@ void ExprTerm()       :
   Token t;
 }
 {
-  t = < NUMBER > | t = < VARIABLE >/*@bgen(jjtree) Term */
+ (
+    t = < NUMBER > | t = < VARIABLE >)/*@bgen(jjtree) Term */
   {
     SimpleNode jjtn001 = new SimpleNode(JJTTERM);
     boolean jjtc001 = true;
@@ -217,6 +386,7 @@ void ExprTerm()       :
   }
 /*@egen*/
   {
+    System.out.println(t.image);
     jjtn001.jjtSetValue(t.image);
   }/*@bgen(jjtree)*/
   } finally {

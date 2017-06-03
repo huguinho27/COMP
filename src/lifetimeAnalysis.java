@@ -2,19 +2,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
-public class LifetimeAnalysis {
+public class lifetimeAnalysis {
 	private ArrayList<Variable> variables;
-	private Register[] registers;
+	private register[] registers;
 
-	public LifetimeAnalysis(int registers) {
-		this.registers = new Register[registers];
+	public lifetimeAnalysis(int registers) {
+		this.registers = new register[registers];
 		variables = new ArrayList<Variable>();
 	}
 
 	/**
 	 * @return the registers
 	 */
-	public Register[] getRegisters() {
+	public register[] getregisters() {
 		return registers;
 	}
 
@@ -143,14 +143,14 @@ public class LifetimeAnalysis {
 	}
 
 	/*
-	 * public void parseNewRegister(SimpleNode s) { SimpleNode n = (SimpleNode)
+	 * public void parseNewregister(SimpleNode s) { SimpleNode n = (SimpleNode)
 	 * s.children[0]; registers.addElement(new register((String) n.value)); }
 	 * 
 	 * public void printLifetime(SimpleNode s) { for (int i = 0; i <
 	 * registers.size();i++) {
-	 * System.out.println(lifetimePerRegister(s,registers.get(i).varName)); } }
+	 * System.out.println(lifetimePerregister(s,registers.get(i).varName)); } }
 	 * 
-	 * public int lifetimePerRegister(SimpleNode s, String regName) { int last =
+	 * public int lifetimePerregister(SimpleNode s, String regName) { int last =
 	 * -1; if (s.children != null) { for (int i = 0; i < s.children.length; ++i)
 	 * { SimpleNode n = (SimpleNode) s.children[i];
 	 * //System.out.println("node"+i); if(parseNodes(n,regName)){ last =i; }
