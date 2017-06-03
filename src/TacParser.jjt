@@ -23,8 +23,7 @@ public class TacParser
     SimpleNode root = tacParser.Expression();
     function(root);
     System.out.println("\nRegister Allocation:");
-    LifetimeAnalysis lf = new LifetimeAnalysis(8);
-    lf.parseNode(root);
+    LifetimeAnalysis lf = new LifetimeAnalysis(8, root);
     lf.printLifetime(root);
     lf.printLifetimeGraph(root);
   }
@@ -67,9 +66,9 @@ SimpleNode Expression() :
 {}
 {
   (
-    (
+	(
       LOOKAHEAD(2)
-      ExprPoint() "-"
+      ExprPoint() ":"
     )?
     (
       Expr1()

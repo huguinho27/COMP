@@ -5,10 +5,15 @@ import java.util.Vector;
 public class LifetimeAnalysis {
 	private ArrayList<Variable> variables;
 	private Register[] registers;
+	private SimpleNode root;
 
-	public LifetimeAnalysis(int registers) {
+	public LifetimeAnalysis(int registers, SimpleNode root) {
 		this.registers = new Register[registers];
+		this.root = root;
 		variables = new ArrayList<Variable>();
+
+		parseNode(root);
+		calculateLifetime();
 	}
 
 	/**
@@ -50,9 +55,16 @@ public class LifetimeAnalysis {
 						addVariable(n);
 						parseNode(n);
 					}
-
 				}
 			}
+		}
+
+	}
+
+	public void calculateLifetime() {
+		for (int i = 0; i < variables.size(); i++) {
+			Variable v = variables.get(i);
+			v.setCalls(calculateCalls(root, v.getName()));
 		}
 	}
 
@@ -60,30 +72,32 @@ public class LifetimeAnalysis {
 		int start = variables.size();
 
 		SimpleNode n = (SimpleNode) s.children[0];
-		variables.add(new Variable((String) n.value, start));
+		Variable v = new Variable((String) n.value, start);
+		if (!variables.contains(v))
+			variables.add(v);
 	}
 
 	public void printLifetime(SimpleNode s) {
 		for (int i = 0; i < variables.size(); i++) {
 			Variable v = variables.get(i);
 
-			v.setCalls(calculateCalls(s, v.getName()));
 			System.out.println(v.getName() + " -> Start = " + v.getStart() + ", End = " + v.getEnd() + ", Range = "
 					+ v.getLifeRange());
 		}
 	}
 
 	public void printLifetimeGraph(SimpleNode s) {
-		System.out.print("\n      ");
+		System.out.print("\n        ");
 		for (int a = 0; a < variables.size(); a++) {
-			System.out.print(variables.get(a).getName() + " ");
+			String padded = String.format("%1$-3s", variables.get(a).getName());
+			System.out.print(padded);
 		}
 		System.out.print("\n");
 		for (int i = 0; i < variables.size(); i++) {
 			Variable v = variables.get(i);
 
-			v.setCalls(calculateCalls(s, v.getName()));
-			System.out.print("\n" + v.getName() + " -> ");
+			String padded = String.format("%1$-3s", variables.get(i).getName());
+			System.out.print("\n" + padded + " -> ");
 			for (int j = 0; j <= v.getEnd(); j++) {
 				if (j < v.getStart())
 					System.out.print("   ");

@@ -27,8 +27,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants/*@egen*
     SimpleNode root = tacParser.Expression();
     function(root);
     System.out.println("\nRegister Allocation:");
-    LifetimeAnalysis lf = new LifetimeAnalysis(8);
-    lf.parseNode(root);
+    LifetimeAnalysis lf = new LifetimeAnalysis(8, root);
     lf.printLifetime(root);
     lf.printLifetimeGraph(root);
   }
@@ -77,9 +76,9 @@ SimpleNode Expression() :
   try {
 /*@egen*/
   (
-    (
+	(
       LOOKAHEAD(2)
-      ExprPoint() "-"
+      ExprPoint() ":"
     )?
     (
       Expr1()

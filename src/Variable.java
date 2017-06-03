@@ -21,6 +21,17 @@ public class Variable {
 		return calls.get(0);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || !(obj instanceof Variable))
+			return false;
+
+		Variable v = (Variable) obj;
+		return getName().equals(v.getName());
+	}
+
 	public ArrayList<Integer> getCalls() {
 		return calls;
 	}

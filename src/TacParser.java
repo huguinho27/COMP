@@ -16,8 +16,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     SimpleNode root = tacParser.Expression();
     function(root);
     System.out.println("\u005cnRegister Allocation:");
-    LifetimeAnalysis lf = new LifetimeAnalysis(8);
-    lf.parseNode(root);
+    LifetimeAnalysis lf = new LifetimeAnalysis(8, root);
     lf.printLifetime(root);
     lf.printLifetimeGraph(root);
   }
@@ -37,7 +36,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
       while (true) {
         if (jj_2_1(2)) {
           ExprPoint();
-          jj_consume_token(SUBT);
+          jj_consume_token(15);
         } else {
           ;
         }
@@ -364,6 +363,23 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3R_3() {
+    if (jj_3R_4()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(6)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(7)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(8)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(9)) return true;
+    }
+    }
+    }
+    return false;
+  }
+
   static private boolean jj_3_2() {
     if (jj_3R_3()) return true;
     return false;
@@ -386,24 +402,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
 
   static private boolean jj_3_1() {
     if (jj_3R_2()) return true;
-    if (jj_scan_token(SUBT)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_3() {
-    if (jj_3R_4()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(6)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(7)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(8)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(9)) return true;
-    }
-    }
-    }
+    if (jj_scan_token(15)) return true;
     return false;
   }
 
@@ -635,7 +634,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[15];
+    boolean[] la1tokens = new boolean[16];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -649,7 +648,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
         }
       }
     }
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 16; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
