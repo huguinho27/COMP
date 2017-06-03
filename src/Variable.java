@@ -1,34 +1,42 @@
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Variable {
 	private String name;
-	private int start;
-	private int end;
+	private ArrayList<Integer> calls;
 
 	public Variable(String name, int start) {
 		this.name = name;
-		this.start = start;
+		ArrayList<Integer> calls = new ArrayList<Integer>();
+		calls.add(start);
+		this.calls = calls;
 	}
 
 	public String getName() {
 		return name;
 	}
-	
-	public int getStart(){
-		return start;
+
+	public int getStart() {
+		Collections.sort(calls);
+		return calls.get(0);
 	}
-	
-	public void setEnd(int end) {
-		if (end == -1)
-			this.end = start;
-		else
-			this.end = end;
+
+	public ArrayList<Integer> getCalls() {
+		return calls;
+	}
+
+	public void setCalls(ArrayList<Integer> calls) {
+		this.calls = calls;
 	}
 
 	public int getEnd() {
-		return end;
+		Collections.sort(calls);
+		return calls.get(calls.size() - 1);
 	}
-	
-	public int getLifeRange(){
+
+	public int getLifeRange() {
+		int start = this.getStart();
+		int end = this.getEnd();
 		return end - start + 1;
 	}
 }

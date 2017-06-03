@@ -67,7 +67,7 @@ public class LifetimeAnalysis {
 		for (int i = 0; i < variables.size(); i++) {
 			Variable v = variables.get(i);
 
-			v.setEnd(calculateEnd(s, v.getName()));
+			v.setCalls(calculateCalls(s, v.getName()));
 			System.out.println(v.getName() + " -> Start = " + v.getStart() + ", End = " + v.getEnd() + ", Range = "
 					+ v.getLifeRange());
 		}
@@ -82,30 +82,36 @@ public class LifetimeAnalysis {
 		for (int i = 0; i < variables.size(); i++) {
 			Variable v = variables.get(i);
 
-			v.setEnd(calculateEnd(s, v.getName()));
+			v.setCalls(calculateCalls(s, v.getName()));
 			System.out.print("\n" + v.getName() + " -> ");
-			for (int j = 0; j < v.getStart(); j++) {
-				System.out.print("   ");
-			}
-			for (int k = 0; k < v.getLifeRange(); k++) {
-				System.out.print("-o-");
+			for (int j = 0; j <= v.getEnd(); j++) {
+				if (j < v.getStart())
+					System.out.print("   ");
+				else {
+					if (v.getCalls().contains(j))
+						System.out.print("-o-");
+					else
+						System.out.print("---");
+				}
 			}
 		}
 		System.out.print("\n");
 	}
 
-	public int calculateEnd(SimpleNode s, String varName) {
-		int last = -1;
+	public ArrayList<Integer> calculateCalls(SimpleNode s, String varName) {
+		Variable v = getVariableByName(varName);
+		ArrayList<Integer> calls = v.getCalls();
+
 		if (s.children != null) {
 			for (int i = 0; i < s.children.length; ++i) {
 				SimpleNode n = (SimpleNode) s.children[i];
 
 				if (parseNodes(n, varName)) {
-					last = i;
+					calls.add(i);
 				}
 			}
 		}
-		return last;
+		return calls;
 	}
 
 	public boolean parseNodes(SimpleNode s, String varName) {
