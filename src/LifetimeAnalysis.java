@@ -68,7 +68,7 @@ public class LifetimeAnalysis {
 	public void calculateLifetime() {
 		for (int i = 0; i < variables.size(); i++) {
 			Variable v = variables.get(i);
-			v.setCalls(calculateCalls(root, v.getName()));
+			v.setCalls(calculateCalls(instructions, v.getName()));
 		}
 	}
 
@@ -78,6 +78,10 @@ public class LifetimeAnalysis {
 
 		if (!variables.contains(v))
 			variables.add(v);
+		else {
+			Variable var = getVariableByName(v.getName());
+			var.addCall(start);
+		}
 	}
 
 	public void printLifetime(SimpleNode s) {
@@ -86,6 +90,7 @@ public class LifetimeAnalysis {
 
 			System.out.println(v.getName() + " -> Start = " + v.getStart() + ", End = " + v.getEnd() + ", Range = "
 					+ v.getLifeRange());
+			System.out.println(v.getCalls().toString());
 		}
 	}
 
@@ -115,20 +120,18 @@ public class LifetimeAnalysis {
 		System.out.print("\n");
 	}
 
-	public ArrayList<Integer> calculateCalls(SimpleNode s, String varName) {
+	public ArrayList<Integer> calculateCalls(ArrayList<SimpleNode> instructions, String varName) {
 		Variable v = getVariableByName(varName);
 		ArrayList<Integer> calls = v.getCalls();
 
-		if (s.children != null) {
-			for (int i = 0; i < s.children.length; ++i) {
-				SimpleNode n = (SimpleNode) s.children[i];
-
-				if (parseNodes(n, varName)) {
-					calls.add(i + 1);
-				}
+		for (int i = 0; i < instructions.size(); i++) {
+			SimpleNode n = (SimpleNode) instructions.get(i);
+			if (parseNodes(n, varName)) {
+				calls.add(i + 1);
 			}
 		}
 		return calls;
+
 	}
 
 	public boolean parseNodes(SimpleNode s, String varName) {
@@ -140,7 +143,8 @@ public class LifetimeAnalysis {
 							|| n.value.equals("<") || n.value.equals(">")) {
 						if (parseExpr(n, varName))
 							return true;
-					}
+					} else if (n.value.equals(varName))
+						return true;
 				}
 			}
 		}
@@ -164,53 +168,4 @@ public class LifetimeAnalysis {
 	public void leftEdgeAllocation() {
 
 	}
-
-	/*
-	 * public void parseNewregister(SimpleNode s) { SimpleNode n = (SimpleNode)
-	 * s.children[0]; registers.addElement(new register((String) n.value)); }
-	 * 
-	 * public void printLifetime(SimpleNode s) { for (int i = 0; i <
-	 * registers.size();i++) {
-	 * System.out.println(lifetimePerregister(s,registers.get(i).varName)); } }
-	 * 
-	 * public int lifetimePerregister(SimpleNode s, String regName) { int last =
-	 * -1; if (s.children != null) { for (int i = 0; i < s.children.length; ++i)
-	 * { SimpleNode n = (SimpleNode) s.children[i];
-	 * //System.out.println("node"+i); if(parseNodes(n,regName)){ last =i; }
-	 * 
-	 * }
-	 * 
-	 * } return last; }
-	 * 
-	 * public boolean parseNodes(SimpleNode s,String regName){
-	 * 
-	 * 
-	 * if (s.children != null) { for (int i = 0; i < s.children.length; ++i) {
-	 * SimpleNode n = (SimpleNode) s.children[i]; if (n != null) { //
-	 * System.out.println(i + ": " + n.value + " " + regName); if
-	 * (n.value.equals("*") || n.value.equals("+") || n.value.equals("-") ||
-	 * n.value.equals("/")) { if(parseExpr(n,regName)) return true; }
-	 * 
-	 * } } }
-	 * 
-	 * 
-	 * return false;
-	 * 
-	 * }
-	 * 
-	 * public boolean parseExpr(SimpleNode s,String regName){
-	 * 
-	 * if (s.children != null) { for (int i = 0; i < s.children.length; ++i) {
-	 * SimpleNode n = (SimpleNode) s.children[i]; if (n != null) { //
-	 * System.out.println(i + ": " + n.value + " " + regName); if
-	 * (n.value.equals(regName)) { return true; }
-	 * 
-	 * } } }
-	 * 
-	 * 
-	 * return false;
-	 * 
-	 * }
-	 */
-
 }

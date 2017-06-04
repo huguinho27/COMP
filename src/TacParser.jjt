@@ -1,6 +1,7 @@
 options
 {
   LOOKAHEAD= 1;
+
 }
 
 PARSER_BEGIN(TacParser)
@@ -51,7 +52,7 @@ TOKEN :
 | < MULT : "*" >
 | < DIV : "/" >
 | < LESSER : "<" >
-| < LESSEQUAL : "<=" >
+| < LESSEQUAL : "=<" >
 | < GREATER : ">" >
 | < GREATEQUAL : ">=" >
 | < LABEL : ":" >
@@ -70,13 +71,18 @@ SimpleNode Expression() :
 {
   (
     (
-      LOOKAHEAD(2)
-      ExprLabel()
-    )?
-    (
-      Expr1()
-    | ExprIf()
-    | ExprGoto()
+       LOOKAHEAD(3)
+      (
+        LOOKAHEAD(2)
+        ExprLabel()
+      )?
+      (
+        Expr1()
+      | ExprIf()
+      | ExprGoto()
+      )
+    | 
+       ExprLabel()
     )
   )+
   < EOF >
@@ -90,7 +96,7 @@ void ExprLabel() #Label :
   Token t;
 }
 {
-  ExprVariable() t = < LABEL > 
+  ExprVariable() t = < LABEL >
   {
     System.out.println(t.image);
     jjtThis.jjtSetValue(t.image);
@@ -135,7 +141,15 @@ void ExprCompare() #Compare :
   Token t;
 }
 {
-  ExprTerm() t = < LESSER > ExprTerm()
+  ExprTerm()
+  (
+    LOOKAHEAD(2)
+    t = < LESSER >
+  | t = < LESSEQUAL >
+  | t = < GREATER >
+  | t = < GREATEQUAL >
+  )
+  ExprTerm()
   {
     jjtThis.jjtSetValue(t.image);
   }
