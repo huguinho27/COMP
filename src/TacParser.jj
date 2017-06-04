@@ -2,7 +2,6 @@
 /*@egen*/options
 {
   LOOKAHEAD= 1;
-
 }
 
 PARSER_BEGIN(TacParser)
@@ -56,6 +55,10 @@ TOKEN :
 | < MULT : "*" >
 | < DIV : "/" >
 | < LESSER : "<" >
+| < LESSEQUAL : "<=" >
+| < GREATER : ">" >
+| < GREATEQUAL : ">=" >
+| < LABEL : ":" >
 }
 
 TOKEN :
@@ -76,9 +79,9 @@ SimpleNode Expression() :
   try {
 /*@egen*/
   (
-	(
+    (
       LOOKAHEAD(2)
-      ExprPoint() ":"
+      ExprLabel()
     )?
     (
       Expr1()
@@ -94,6 +97,49 @@ SimpleNode Expression() :
 /*@egen*/
   {
     return jjtn000;
+  }/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}
+
+void ExprLabel()        :
+{/*@bgen(jjtree) Label */
+  SimpleNode jjtn000 = new SimpleNode(JJTLABEL);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+  Token t;
+}
+{/*@bgen(jjtree) Label */
+  try {
+/*@egen*/
+  ExprVariable() t = < LABEL >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/ 
+  {
+    System.out.println(t.image);
+    jjtn000.jjtSetValue(t.image);
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -325,7 +371,7 @@ void Expr2()       :
   jjtree.openNodeScope(jjtn000);
 /*@egen*/
   Token t;
-} //a anota\u00ef\u00bf\u00bd\u00ef\u00bf\u00bdo \u00ef\u00bf\u00bd#void\u00ef\u00bf\u00bd instrui a ferramenta para n\u00ef\u00bf\u00bdo gerar n\u00ef\u00bf\u00bds para a regra
+}
 {/*@bgen(jjtree) Oper */
   try {
 /*@egen*/
@@ -389,7 +435,6 @@ void ExprTerm()       :
   }
 /*@egen*/
   {
-    System.out.println(t.image);
     jjtn001.jjtSetValue(t.image);
   }/*@bgen(jjtree)*/
   } finally {
