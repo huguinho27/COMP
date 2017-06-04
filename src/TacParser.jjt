@@ -7,11 +7,12 @@ options
 PARSER_BEGIN(TacParser)
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class TacParser
 {
   public static void main(String [] args) throws ParseException, 
-  FileNotFoundException
+  FileNotFoundException, IOException
   {
     if (args.length < 1)
     {
@@ -26,6 +27,8 @@ public class TacParser
     LifetimeAnalysis lf = new LifetimeAnalysis(8, root);
     lf.printLifetime(root);
     lf.printLifetimeGraph(root);
+    TacToC tac = new TacToC();
+    tac.toCString(root);
   }
 
   public static void function(SimpleNode root)

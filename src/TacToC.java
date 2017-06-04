@@ -71,6 +71,48 @@ public class TacToC
 		out.println("\n}");
 	}
 	
+	public void toCString(SimpleNode root) throws FileNotFoundException, IOException
+	{
+		ArrayList<String> declaredVariables = new ArrayList<String>();
+		
+		String out = root.dump("");
+		String[] lines = out.split("\n");
+		String parts[];
+		String output = "int main()\n{\n";
+		
+		for (int i = 0; i < lines.length;i++)
+		{
+			
+			if (lines[i].contains("Label"))
+			{
+				i++;
+				parts = lines[i].split(" ");
+				output += parts[0] + ": ";
+				i++;
+				parts = lines[i].split(" ");
+				output += parts[0] + " (";
+				i+=2;
+				parts = lines[i].split(" ");
+				output += parts[0] + " ";
+				i--;
+				parts = lines[i].split(" ");
+				output += parts[0] + " ";
+				i+=2;
+				parts = lines[i].split(" ");
+				output += parts[0] + ") ";
+				i++;
+				parts = lines[i].split(" ");
+				output += parts[0] + " ";
+				i++;
+				parts = lines[i].split(" ");
+				output += parts[0] + ";";
+				break;
+			}
+		}
+		System.out.println(output);
+	}
+	
+	
 
 	public static void main(String[] args) throws FileNotFoundException, IOException
 	{
