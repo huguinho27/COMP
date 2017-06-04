@@ -88,9 +88,9 @@ public class LifetimeAnalysis {
 		for (int i = 0; i < variables.size(); i++) {
 			Variable v = variables.get(i);
 
-			System.out.println(v.getName() + " -> Start = " + v.getStart() + ", End = " + v.getEnd() + ", Range = "
+			System.out.print(v.getName() + " -> Start = " + v.getStart() + ", End = " + v.getEnd() + ", Range = "
 					+ v.getLifeRange());
-			System.out.println(v.getCalls().toString());
+			System.out.println(", Calls = " + v.getCalls().toString());
 		}
 	}
 
@@ -107,13 +107,19 @@ public class LifetimeAnalysis {
 			String padded = String.format("%1$-3s", variables.get(i).getName());
 			System.out.print("\n" + padded + " -> ");
 			for (int j = 1; j <= v.getEnd(); j++) {
-				if (j < v.getStart())
-					System.out.print("   ");
-				else {
-					if (v.getCalls().contains(j))
-						System.out.print("-o-");
-					else
-						System.out.print("---");
+				if (j == v.getStart()) {
+					System.out.print("  o");
+				} else if (j == v.getEnd()) {
+					System.out.print("o ");
+				} else {
+					if (j < v.getStart())
+						System.out.print("   ");
+					else {
+						if (v.getCalls().contains(j))
+							System.out.print("-o-");
+						else
+							System.out.print("---");
+					}
 				}
 			}
 		}
@@ -163,9 +169,5 @@ public class LifetimeAnalysis {
 			}
 		}
 		return false;
-	}
-
-	public void leftEdgeAllocation() {
-
 	}
 }
