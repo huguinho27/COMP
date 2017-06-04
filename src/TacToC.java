@@ -80,35 +80,19 @@ public class TacToC
 		String parts[];
 		String output = "int main()\n{\n";
 		
-		for (int i = 0; i < lines.length;i++)
+		if (root.getChildren() != null)
 		{
-			
-			if (lines[i].contains("Label"))
+			for (int i = 0; i < root.getChildren().length; ++i)
 			{
-				i++;
-				parts = lines[i].split(" ");
-				output += parts[0] + ": ";
-				i++;
-				parts = lines[i].split(" ");
-				output += parts[0] + " (";
-				i+=2;
-				parts = lines[i].split(" ");
-				output += parts[0] + " ";
-				i--;
-				parts = lines[i].split(" ");
-				output += parts[0] + " ";
-				i+=2;
-				parts = lines[i].split(" ");
-				output += parts[0] + ") ";
-				i++;
-				parts = lines[i].split(" ");
-				output += parts[0] + " ";
-				i++;
-				parts = lines[i].split(" ");
-				output += parts[0] + ";";
-				break;
+				SimpleNode n = (SimpleNode) root.getChildren()[i];
+				if (n != null)
+				{
+					out += n.dump(n.value + " ");
+				}
 			}
 		}
+		
+		
 		System.out.println(output);
 	}
 	

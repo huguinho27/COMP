@@ -87,6 +87,11 @@ public class SimpleNode implements Node
 	{
 		return prefix + toString();
 	}
+	
+	public Node[] getChildren()
+	{
+		return children;
+	}
 
 	/*
 	 * Override this method if you want to customize how the node dumps out its
@@ -104,7 +109,7 @@ public class SimpleNode implements Node
 				SimpleNode n = (SimpleNode) children[i];
 				if (n != null)
 				{
-					out += n.dump(n.value + " ");// + "\n";
+					out += n.dump(n.value + " ");
 				}
 			}
 		}
