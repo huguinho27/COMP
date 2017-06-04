@@ -17,7 +17,6 @@ public class Variable {
 	}
 
 	public int getStart() {
-		Collections.sort(calls);
 		return calls.get(0);
 	}
 
@@ -36,12 +35,17 @@ public class Variable {
 		return calls;
 	}
 
+	public void addCall(int call) {
+		this.calls.add(call);
+		Collections.sort(calls);
+	}
+
 	public void setCalls(ArrayList<Integer> calls) {
+		Collections.sort(calls);
 		this.calls = calls;
 	}
 
 	public int getEnd() {
-		Collections.sort(calls);
 		return calls.get(calls.size() - 1);
 	}
 
