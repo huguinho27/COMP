@@ -4,6 +4,7 @@ import java.util.Vector;
 
 public class LifetimeAnalysis {
 	private ArrayList<Variable> variables;
+	private ArrayList<SimpleNode> instructions;
 	private Register[] registers;
 	private SimpleNode root;
 
@@ -11,6 +12,7 @@ public class LifetimeAnalysis {
 		this.registers = new Register[registers];
 		this.root = root;
 		variables = new ArrayList<Variable>();
+		instructions = new ArrayList<SimpleNode>();
 
 		parseNode(root);
 		calculateLifetime();
@@ -30,7 +32,7 @@ public class LifetimeAnalysis {
 	public Variable getVariableByName(String name) {
 		for (int i = 0; i < variables.size(); i++) {
 			Variable v = variables.get(i);
-			if (v.getName() == name)
+			if (v.getName().equals(name))
 				return v;
 		}
 		return null;
@@ -39,26 +41,28 @@ public class LifetimeAnalysis {
 	public int getVariableIndex(String name) {
 		for (int i = 0; i < variables.size(); i++) {
 			Variable v = variables.get(i);
-			if (v.getName() == name)
+			if (v.getName().equals(name))
 				return i;
 		}
 		return -1;
 	}
 
 	public void parseNode(SimpleNode s) {
-		// System.out.println(toString(prefix));
 		if (s.children != null) {
 			for (int i = 0; i < s.children.length; ++i) {
 				SimpleNode n = (SimpleNode) s.children[i];
 				if (n != null) {
-					if (n.value.equals(":=")) {
-						addVariable(n);
-						parseNode(n);
+					if (n.value.equals(":=") | n.value.equals("if")) {
+						instructions.add(n);
+						int start = instructions.size();
+						if (n.value.equals(":=")) {
+							addVariable(n, start);
+							parseNode(n);
+						}
 					}
 				}
 			}
 		}
-
 	}
 
 	public void calculateLifetime() {
@@ -68,11 +72,10 @@ public class LifetimeAnalysis {
 		}
 	}
 
-	public void addVariable(SimpleNode s) {
-		int start = variables.size();
-
+	public void addVariable(SimpleNode s, int start) {
 		SimpleNode n = (SimpleNode) s.children[0];
 		Variable v = new Variable((String) n.value, start);
+
 		if (!variables.contains(v))
 			variables.add(v);
 	}
@@ -87,9 +90,9 @@ public class LifetimeAnalysis {
 	}
 
 	public void printLifetimeGraph(SimpleNode s) {
-		System.out.print("\n        ");
-		for (int a = 0; a < variables.size(); a++) {
-			String padded = String.format("%1$-3s", variables.get(a).getName());
+		System.out.print("\nLine    ");
+		for (int a = 0; a < instructions.size(); a++) {
+			String padded = String.format("%1$-3s", (a + 1));
 			System.out.print(padded);
 		}
 		System.out.print("\n");
@@ -98,7 +101,7 @@ public class LifetimeAnalysis {
 
 			String padded = String.format("%1$-3s", variables.get(i).getName());
 			System.out.print("\n" + padded + " -> ");
-			for (int j = 0; j <= v.getEnd(); j++) {
+			for (int j = 1; j <= v.getEnd(); j++) {
 				if (j < v.getStart())
 					System.out.print("   ");
 				else {
@@ -121,7 +124,7 @@ public class LifetimeAnalysis {
 				SimpleNode n = (SimpleNode) s.children[i];
 
 				if (parseNodes(n, varName)) {
-					calls.add(i);
+					calls.add(i + 1);
 				}
 			}
 		}
@@ -133,8 +136,8 @@ public class LifetimeAnalysis {
 			for (int i = 0; i < s.children.length; ++i) {
 				SimpleNode n = (SimpleNode) s.children[i];
 				if (n != null) {
-					// System.out.println(i + ": " + n.value + " " + regName);
-					if (n.value.equals("*") || n.value.equals("+") || n.value.equals("-") || n.value.equals("/")) {
+					if (n.value.equals("*") || n.value.equals("+") || n.value.equals("-") || n.value.equals("/")
+							|| n.value.equals("<") || n.value.equals(">")) {
 						if (parseExpr(n, varName))
 							return true;
 					}

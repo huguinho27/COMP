@@ -1,7 +1,6 @@
 options
 {
   LOOKAHEAD= 1;
-
 }
 
 PARSER_BEGIN(TacParser)
@@ -52,6 +51,10 @@ TOKEN :
 | < MULT : "*" >
 | < DIV : "/" >
 | < LESSER : "<" >
+| < LESSEQUAL : "<=" >
+| < GREATER : ">" >
+| < GREATEQUAL : ">=" >
+| < LABEL : ":" >
 }
 
 TOKEN :
@@ -66,9 +69,9 @@ SimpleNode Expression() :
 {}
 {
   (
-	(
+    (
       LOOKAHEAD(2)
-      ExprPoint() ":"
+      ExprLabel()
     )?
     (
       Expr1()
@@ -79,6 +82,18 @@ SimpleNode Expression() :
   < EOF >
   {
     return jjtThis;
+  }
+}
+
+void ExprLabel() #Label :
+{
+  Token t;
+}
+{
+  ExprVariable() t = < LABEL > 
+  {
+    System.out.println(t.image);
+    jjtThis.jjtSetValue(t.image);
   }
 }
 
@@ -145,7 +160,7 @@ void Expr1() #Assign :
 void Expr2() #Oper :
 {
   Token t;
-} //a anota��o �#void� instrui a ferramenta para n�o gerar n�s para a regra
+}
 {
   ExprTerm()
   (
@@ -170,7 +185,6 @@ void ExprTerm() #void :
   | t = < VARIABLE >
   )
   {
-    System.out.println(t.image);
     jjtThis.jjtSetValue(t.image);
   }
   #Term
