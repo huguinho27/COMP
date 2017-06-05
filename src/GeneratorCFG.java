@@ -1,14 +1,15 @@
 import javafx.util.Pair;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.swing.filechooser.FileSystemView;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
 import static java.lang.System.out;
+import static java.lang.System.setOut;
 
 /**
  * Created by Ruben on 6/4/2017.
@@ -101,12 +102,16 @@ public class GeneratorCFG {
         this.nodes = nodes;
     }
 
-    public void saveFIle() throws IOException {
+    public void saveFile(String name) throws IOException {
         FileWriter out = null;
 
         try {
 
-            out = new FileWriter("output.dot");
+            File file = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "\\" + "dot-files" + "\\");
+            if(!file.exists())
+            file.mkdir();
+            System.out.println(file.getAbsolutePath());
+            out = new FileWriter(file.getAbsolutePath() + "\\" +name + ".dot");
 
             out.write("digraph\n");
             out.write("{\n");
