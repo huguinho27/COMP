@@ -33,7 +33,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     return tacParser.Expression();
   }
 
-  ublic TacParser(){
+  public TacParser(){
 
   }
 

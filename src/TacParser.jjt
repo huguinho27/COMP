@@ -35,6 +35,14 @@ public class TacParser
   {
     root.dump("");
   }
+   public static SimpleNode parseFile(File filePath) throws FileNotFoundException, ParseException {
+    TacParser tacParser = new TacParser(new FileInputStream(filePath));
+    return tacParser.Expression();
+  }
+
+  public TacParser(){
+
+  }
 }
 
 PARSER_END(TacParser)
