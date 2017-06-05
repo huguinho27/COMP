@@ -9,18 +9,18 @@ import java.io.IOException;
 /**
  * Created by ei10117 on 05/06/2017.
  */
-public class FileChoose {
+public class FileBuilder {
     public  JTextField  usernameChooser;
     public   JFrame    preFrame;
     public  File selectedFile;
     public static void main(String [] args) throws IOException, ParseException {
         JFileChooser fileChooser = new JFileChooser();
-        FileChoose fileChoose = new FileChoose();
+        FileBuilder fileBuilder = new FileBuilder();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(new JFrame());
         if (result == JFileChooser.APPROVE_OPTION) {
-                fileChoose.selectedFile = fileChooser.getSelectedFile();
-                fileChoose.setName();
+                fileBuilder.selectedFile = fileChooser.getSelectedFile();
+                fileBuilder.setName();
         }
     }
 

@@ -1,15 +1,9 @@
-import javafx.util.Pair;
+
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
 
-import static java.lang.System.out;
-import static java.lang.System.setOut;
+import java.util.Vector;
 
 /**
  * Created by Ruben on 6/4/2017.
