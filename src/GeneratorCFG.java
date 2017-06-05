@@ -1,14 +1,6 @@
-import javafx.util.Pair;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
-
-import static java.lang.System.out;
 
 /**
  * Created by Ruben on 6/4/2017.

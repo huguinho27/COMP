@@ -28,7 +28,7 @@ public class TacParser
     lf.printLifetime(root);
     lf.printLifetimeGraph(root);
     TacToC tac = new TacToC();
-    tac.toCString(root);
+    tac.saveFIle(root);
   }
 
   public static void function(SimpleNode root)
@@ -55,7 +55,7 @@ TOKEN :
 | < MULT : "*" >
 | < DIV : "/" >
 | < LESSER : "<" >
-| < LESSEQUAL : "=<" >
+| < LESSEQUAL : "<=" >
 | < GREATER : ">" >
 | < GREATEQUAL : ">=" >
 | < LABEL : ":" >
