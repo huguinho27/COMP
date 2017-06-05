@@ -10,78 +10,73 @@ import java.io.IOException;
  * Created by ei10117 on 05/06/2017.
  */
 public class FileBuilder {
-    public  JTextField  usernameChooser;
-    public   JFrame    preFrame;
-    public  File selectedFile;
-    public static void main(String [] args) throws IOException, ParseException {
+    public  static JTextField  usernameChooser;
+    public  static  JFrame    preFrame;
+    public  static File selectedFile;
+
+
+    public static File selectFile() {
         JFileChooser fileChooser = new JFileChooser();
-        FileBuilder fileBuilder = new FileBuilder();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(new JFrame());
         if (result == JFileChooser.APPROVE_OPTION) {
-                fileBuilder.selectedFile = fileChooser.getSelectedFile();
-                fileBuilder.setName();
+            return fileChooser.getSelectedFile();
+
+        }
+        return null;
+    }
+
+
+    public static void buildDot(File file){
+        SimpleNode node = null;
+        try {
+            node = TacParser.parseFile(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        GeneratorCFG generatorCFG = new GeneratorCFG(node);
+        generatorCFG.parseNodes();
+        try {
+
+            generatorCFG.saveFile(file.getName().substring(0,file.getName().indexOf(".")));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-
-    public  void setName(){
-        //frame studd
-        preFrame = new JFrame("Name file");
-        JPanel prePanel = new JPanel(new GridBagLayout());
-        JLabel chooseUsernameLabel = new JLabel("File Name");
-        JButton enterServer = new JButton("Save name");
-        enterServer.addActionListener(new enterServerButtonListener());
-
-
-        GridBagConstraints preRight = new GridBagConstraints();
-        preRight.insets = new Insets(0, 0, 0, 10);
-        preRight.anchor = GridBagConstraints.EAST;
-        GridBagConstraints preLeft = new GridBagConstraints();
-        preLeft.anchor = GridBagConstraints.WEST;
-        preLeft.insets = new Insets(0, 10, 0, 10);
-        // preRight.weightx = 2.0;
-        preRight.fill = GridBagConstraints.HORIZONTAL;
-        preRight.gridwidth = GridBagConstraints.REMAINDER;
+    public static void buildLifetime(File file){
+        SimpleNode node = null;
+        try {
+            node = TacParser.parseFile(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
 
-        usernameChooser = new JTextField(15);
-        prePanel.add(chooseUsernameLabel, preLeft);
-        prePanel.add(usernameChooser, preRight);
-
-
-        preFrame.add(BorderLayout.CENTER, prePanel);
-        preFrame.add(BorderLayout.SOUTH, enterServer);
-        preFrame.setVisible(true);
-        preFrame.setSize(300, 300);
     }
 
 
-    String  fileName;
-    class enterServerButtonListener implements ActionListener {
+
+    static class enterServerButtonListener implements ActionListener {
+        String  fileName;
+        File file;
+        public enterServerButtonListener(File file) {
+            this.file = file;
+        }
+
         public void actionPerformed(ActionEvent event) {
             fileName = usernameChooser.getText();
             if (fileName.length() < 1) {
                 System.out.println("No!");
             } else {
                 preFrame.setVisible(false);
-                SimpleNode node = null;
-                try {
-                    node = TacParser.parseFile(selectedFile);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                GeneratorCFG generatorCFG = new GeneratorCFG(node);
-                generatorCFG.parseNodes();
-                try {
-                    generatorCFG.saveFile(fileName);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                System.exit(0);
 
+
+                preFrame.dispose();
             }
         }
 
