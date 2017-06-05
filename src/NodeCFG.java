@@ -60,6 +60,10 @@ public class NodeCFG {
 
     public  void substituteLabels()
     {
+    	if(GeneratorCFG.labels.contains(name))
+        {
+            name = Integer.toString( GeneratorCFG.labelsInt.get(GeneratorCFG.labels.indexOf(name)));
+        }
         if(GeneratorCFG.labels.contains(to))
         {
             to = Integer.toString( GeneratorCFG.labelsInt.get(GeneratorCFG.labels.indexOf(to)));
