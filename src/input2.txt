@@ -1,6 +1,6 @@
 b  := 2
 t1 := 0              
-L1 : if t1 =< 10 goto L2  
+L1 : if t1 <= 10 goto L2  
      t2 := t1 * t1      
      t3 := t1 * 4     
      t4 := b + t3
@@ -8,4 +8,4 @@ L1 : if t1 =< 10 goto L2
      t4 := t2        
      t1 := t1 + 1
      goto L1
-L2 : 
+L2 :  

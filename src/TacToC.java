@@ -16,6 +16,7 @@ public class TacToC
 		for (int i = 0; i < line.length; i++)
 		{
 			String[] parts = line[i].split(" ");
+			
 			switch (parts.length)
 			{
 			case 1:
@@ -54,9 +55,18 @@ public class TacToC
 				newCcodeLine += parts[0] + " " + parts[1] + ";\n";
 				break;
 			}
+			case 4:
+			{
+				newCcodeLine += parts[0] + " " + parts[1] + " " + "=" + " " + parts[3] + ";\n";
+				break;
+			}
+			case 6:
+			{
+				newCcodeLine += parts[0] + " " + parts[1] + " " + "=" + " " + parts[3] + " " + parts[4] + " " + parts[5] + ";\n";
+				break;
+			}
 			default:
 			{
-				System.out.println("Que linha e esta?!?");
 				break;
 			}
 			}

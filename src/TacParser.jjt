@@ -1,6 +1,7 @@
 options
 {
   LOOKAHEAD= 1;
+  STATIC = false;
 
 }
 
@@ -8,6 +9,7 @@ PARSER_BEGIN(TacParser)
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.File;
 
 public class TacParser
 {
