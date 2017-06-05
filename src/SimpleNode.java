@@ -115,6 +115,68 @@ public class SimpleNode implements Node
 		}
 		return out;
 	}
+	
+	public static String equalsNode(SimpleNode n)
+  {
+    SimpleNode left = left(n);
+    SimpleNode right = right(n);
+    String str;
+    if(right.jjtGetNumChildren() == 2)
+    {
+      String result = (String)left.jjtGetValue();
+      String operation = parseOperator(right);
+      return result + " " + n.jjtGetValue() + " " +operation;
+    }
+    else if(right.jjtGetNumChildren() == 0){
+      String result = (String)left.jjtGetValue();
+      String valor = (String)right.jjtGetValue();
+      return result + " " + n.jjtGetValue() + " " +valor;
+    }
+    return "";
+  }
+
+  public static String parseOperator(SimpleNode n) {
+    SimpleNode left = left(n);
+    SimpleNode right = right(n);
+
+    String op1 = (String)left.jjtGetValue();
+    String op2 = (String)right.jjtGetValue();
+    return op1 + " " + n.jjtGetValue() + " " + op2;
+  }
+
+  public static String parseLabel(SimpleNode n)
+  {
+    return (String)((SimpleNode)n.jjtGetChild(0)).jjtGetValue();
+  }
+
+  public static String parseGoto(SimpleNode n)
+  {
+    return (String)((SimpleNode)n.jjtGetChild(0)).jjtGetValue();
+  }
+
+
+  public static String leftString(SimpleNode n)
+  {
+    return (String)((SimpleNode)n.jjtGetChild(0)).jjtGetValue();
+
+  }
+
+  public static String rightString(SimpleNode n)
+  {
+    return (String)((SimpleNode)n.jjtGetChild(1)).jjtGetValue();
+  }
+
+  public static SimpleNode left(SimpleNode n)
+  {
+    return (SimpleNode)n.jjtGetChild(0);
+
+  }
+
+  public static SimpleNode right(SimpleNode n)
+  {
+    return(SimpleNode)n.jjtGetChild(1);
+  }
+
 }
 
 /*
