@@ -1,0 +1,45 @@
+node {
+	size: 35px, 35px;
+	fill-mode: dyn-plain;
+	text-size: 20px;
+	text-color: white;
+	text-background-color:red;
+}
+
+node .black{
+	fill-color:black;
+}
+
+node .orange{
+	fill-color:orange;
+}
+
+node .lightBlue{
+	fill-color:lightBlue;
+}
+
+node .purple{
+	fill-color:#663399;
+}
+
+node .green{
+	fill-color: green;
+}
+node .red{
+	fill-color: red;
+}
+node .blue{
+	fill-color: blue;
+}
+node .grey{
+	fill-color:#A9A9A9;
+}
+node .pink{
+	fill-color:#FF1493;
+}
+node .brown{
+	fill-color:#A52A2A;
+}
+node .forestGreen{
+	fill-color:#228B22;
+}

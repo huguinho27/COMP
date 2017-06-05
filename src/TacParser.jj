@@ -2,38 +2,60 @@
 /*@egen*/options
 {
   LOOKAHEAD= 1;
+
+  STATIC = false;
 }
 
 PARSER_BEGIN(TacParser)
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants/*@egen*/
 {/*@bgen(jjtree)*/
-  protected static JJTTacParserState jjtree = new JJTTacParserState();
+  protected JJTTacParserState jjtree = new JJTTacParserState();
 
 /*@egen*/
   public static void main(String [] args) throws ParseException, 
-  FileNotFoundException
+  FileNotFoundException, IOException
   {
     if (args.length < 1)
     {
       System.out.println("Please pass in the filename for a parameter.");
       System.exit(1);
     }
-    System.out.println("Reading from file " + "input2.txt");
-    TacParser tacParser = new TacParser(new FileInputStream(args [0]));
+    System.out.println("Reading from file " + args [0]);
+    File file = new File(args [0]);
+    FileInputStream fileInputStream;
+    if (file.exists())
+    {
+      fileInputStream = new FileInputStream(file);
+    }
+    TacParser tacParser = new TacParser(fileInputStream);
     SimpleNode root = tacParser.Expression();
     function(root);
     System.out.println("\nRegister Allocation:");
     LifetimeAnalysis lf = new LifetimeAnalysis(8, root);
     lf.printLifetime(root);
     lf.printLifetimeGraph(root);
+    TacToC tac = new TacToC();
+    tac.saveFIle(root);
   }
 
   public static void function(SimpleNode root)
   {
     root.dump("");
+  }
+
+  public static SimpleNode parseFile(File filePath) throws FileNotFoundException, ParseException
+  {
+    TacParser tacParser = new TacParser(new FileInputStream(filePath));
+    return tacParser.Expression();
+  }
+
+  public TacParser()
+  {
   }
 }
 
@@ -58,6 +80,7 @@ TOKEN :
 | < LESSEQUAL : "<=" >
 | < GREATER : ">" >
 | < GREATEQUAL : ">=" >
+| < EQUAL : "==" >
 | < LABEL : ":" >
 }
 
@@ -80,13 +103,18 @@ SimpleNode Expression() :
 /*@egen*/
   (
     (
-      LOOKAHEAD(2)
+      LOOKAHEAD(3)
+      (
+        LOOKAHEAD(2)
+        ExprLabel()
+      )?
+      (
+        Expr1()
+      | ExprIf()
+      | ExprGoto()
+      )
+    | 
       ExprLabel()
-    )?
-    (
-      Expr1()
-    | ExprIf()
-    | ExprGoto()
     )
   )+
   < EOF >/*@bgen(jjtree)*/
@@ -136,7 +164,7 @@ void ExprLabel()        :
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
   }
-/*@egen*/ 
+/*@egen*/
   {
     System.out.println(t.image);
     jjtn000.jjtSetValue(t.image);
@@ -286,7 +314,16 @@ void ExprCompare()          :
 {/*@bgen(jjtree) Compare */
   try {
 /*@egen*/
-  ExprTerm() t = < LESSER > ExprTerm()/*@bgen(jjtree)*/
+  ExprTerm()
+  (
+    LOOKAHEAD(2)
+    t = < LESSER >
+  | t = < LESSEQUAL >
+  | t = < GREATER >
+  | t = < GREATEQUAL >
+  | t = < EQUAL >
+  )
+  ExprTerm()/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

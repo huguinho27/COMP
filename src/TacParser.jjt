@@ -2,9 +2,11 @@ options
 {
   LOOKAHEAD= 1;
 
+  STATIC = false;
 }
 
 PARSER_BEGIN(TacParser)
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,8 +21,14 @@ public class TacParser
       System.out.println("Please pass in the filename for a parameter.");
       System.exit(1);
     }
-    System.out.println("Reading from file " + "input2.txt");
-    TacParser tacParser = new TacParser(new FileInputStream(args [0]));
+    System.out.println("Reading from file " + args [0]);
+    File file = new File(args [0]);
+    FileInputStream fileInputStream;
+    if (file.exists())
+    {
+      fileInputStream = new FileInputStream(file);
+    }
+    TacParser tacParser = new TacParser(fileInputStream);
     SimpleNode root = tacParser.Expression();
     function(root);
     System.out.println("\nRegister Allocation:");
@@ -35,13 +43,15 @@ public class TacParser
   {
     root.dump("");
   }
-   public static SimpleNode parseFile(File filePath) throws FileNotFoundException, ParseException {
+
+  public static SimpleNode parseFile(File filePath) throws FileNotFoundException, ParseException
+  {
     TacParser tacParser = new TacParser(new FileInputStream(filePath));
     return tacParser.Expression();
   }
 
-  public TacParser(){
-
+  public TacParser()
+  {
   }
 }
 
@@ -66,6 +76,7 @@ TOKEN :
 | < LESSEQUAL : "<=" >
 | < GREATER : ">" >
 | < GREATEQUAL : ">=" >
+| < EQUAL : "==" >
 | < LABEL : ":" >
 }
 
@@ -82,7 +93,7 @@ SimpleNode Expression() :
 {
   (
     (
-       LOOKAHEAD(3)
+      LOOKAHEAD(3)
       (
         LOOKAHEAD(2)
         ExprLabel()
@@ -93,7 +104,7 @@ SimpleNode Expression() :
       | ExprGoto()
       )
     | 
-       ExprLabel()
+      ExprLabel()
     )
   )+
   < EOF >
@@ -159,6 +170,7 @@ void ExprCompare() #Compare :
   | t = < LESSEQUAL >
   | t = < GREATER >
   | t = < GREATEQUAL >
+  | t = < EQUAL >
   )
   ExprTerm()
   {
