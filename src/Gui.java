@@ -3,20 +3,22 @@
 import java.awt.*;
 import java.awt.event.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
+import java.io.*;
 import javax.swing.*;
 
 public class Gui {
     public File filePath;
+    public SimpleNode node;
 
    public JFrame frame = new JFrame("JDialog Demo");
     public JButton selectFileBtn = new JButton("Select File");
     public JButton dotBuildBtn = new JButton("Build .dot");
     public JButton lifetimeBtn= new JButton("Lifetime");
     public JButton graphColorBtn = new JButton("GraphColor");
-    public JTextArea area = new JTextArea("Welcome to javatpoint");
+    public JTextArea lifetimeArea = new JTextArea();
+    public JTextArea messagesArea = new JTextArea();
+    public JLabel filelabel = new JLabel("<html> <font color='white'>FileName</font></html>");
+    public JTextArea fileText = new JTextArea("No file added");
 
 
     public Gui(){
@@ -24,11 +26,18 @@ public class Gui {
         selectFileBtn = new JButton("Select File");
         dotBuildBtn = new JButton("Build .dot");;
         filePath = null;
+        JTextAreaOutputStream out = new JTextAreaOutputStream (messagesArea);
+
     }
     public  void config() {
-        area.setBounds(10, 30, 200, 200);
-        area.setEditable(false);
-        area.setLineWrap(true);
+        lifetimeArea.setSize(200,300);
+        lifetimeArea.setEditable(false);
+        lifetimeArea.setLineWrap(true);
+
+        messagesArea.setSize(200,300);
+        messagesArea.setEditable(false);
+        messagesArea.setLineWrap(true);
+        JTextAreaOutputStream out = new JTextAreaOutputStream (messagesArea);
     }
     public static void main(String[] args) throws IOException {
         Gui gui = new Gui();
@@ -37,14 +46,26 @@ public class Gui {
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         gui.filePath = FileBuilder.selectFile();
+                        gui.fileText.setText(gui.filePath.getName());
+
+                        try {
+                            gui.node = TacParser.parseFile(gui.filePath);
+                        } catch (FileNotFoundException a) {
+                            a.printStackTrace();
+                        } catch (ParseException a) {
+                            a.printStackTrace();
+                        }
                     }
                 });
 
         gui.dotBuildBtn.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        if(gui.filePath != null)
-                        FileBuilder.buildDot(gui.filePath);
+                        if(gui.filePath != null) {
+                            FileBuilder.buildDot(gui.node, gui.filePath);
+                            JOptionPane.showMessageDialog(new Frame(),
+                                    "File " + gui.filePath.getName().substring(0,gui.filePath.getName().indexOf(".")) + ".dot " + "created in: "  + " C:\\Users\\account-name\\Documents\\dot-files\\");
+                        }
                         else
                             JOptionPane.showMessageDialog(new Frame(),
                                     "Any file selected.");
@@ -54,9 +75,20 @@ public class Gui {
         gui.lifetimeBtn.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        if(gui.filePath != null)
-                            FileBuilder.buildDot(gui.filePath);
-                        else
+                        gui.lifetimeArea.setText("");
+                        if(gui.filePath != null) {
+                            JTextAreaOutputStream out = new JTextAreaOutputStream (gui.lifetimeArea);
+                            System.setOut (new PrintStream(out));
+                            LifetimeAnalysis lf = new LifetimeAnalysis(8,gui.node);
+                            lf.printLifetimeGraph(gui.node);
+                            System.out.println();
+                            System.out.println();
+                            System.out.println();
+                            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+
+
+
+                        }else
                             JOptionPane.showMessageDialog(new Frame(),
                                     "Any file selected.");
                     }
@@ -65,11 +97,11 @@ public class Gui {
         gui.graphColorBtn.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        if(gui.filePath != null)
+                       /* if(gui.filePath != null)
                             FileBuilder.buildDot(gui.filePath);
                         else
                             JOptionPane.showMessageDialog(new Frame(),
-                                    "Any file selected.");
+                                    "Any file selected.");*/
                     }
                 });
 
@@ -84,12 +116,27 @@ public class Gui {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
+        /*JPanel mainPanel2 = new JPanel();
+        mainPanel2.setLayout(new BorderLayout());*/
+
+
         JPanel northPanel = new JPanel();
         northPanel.setBackground(Color.darkGray);
         northPanel.setLayout(new GridBagLayout());
 
-        mainPanel.add(new JScrollPane(area), BorderLayout.CENTER);
-        frame.add(mainPanel);
+        JPanel northPanel2 = new JPanel();
+        northPanel2.setBackground(Color.darkGray);
+        northPanel2.setLayout(new GridBagLayout());
+
+        JScrollPane panelLifetime= new JScrollPane(lifetimeArea);
+        mainPanel.add(panelLifetime, BorderLayout.CENTER);
+     //   panel1.setSize(300,300);
+
+       /* JScrollPane panel2= new JScrollPane(messagesArea);
+        panel2.setSize(300,300);*/
+
+
+
 
         GridBagConstraints select = new GridBagConstraints();
         select.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -123,16 +170,47 @@ public class Gui {
         graphColor.weighty = 1.0D;
 
 
+        GridBagConstraints fileLabelPos = new GridBagConstraints();
+        fileLabelPos.anchor = GridBagConstraints.LINE_START;
+        fileLabelPos.fill = GridBagConstraints.HORIZONTAL;
+        fileLabelPos.gridy = 1;
+        fileLabelPos.weightx = 0.33;
+        fileLabelPos.weighty = 1.0D;
+
+        GridBagConstraints filenamePos = new GridBagConstraints();
+        filenamePos.insets = new Insets(0, 10, 0, 0);
+        filenamePos.anchor = GridBagConstraints.CENTER;
+        filenamePos.fill = GridBagConstraints.HORIZONTAL;
+        filenamePos.gridy = 1;
+        filenamePos.weightx = 0.66;
+        filenamePos.weighty = 1.0D;
+
+
 
 
         northPanel.add(selectFileBtn, select);
         northPanel.add(dotBuildBtn, build);
         northPanel.add(lifetimeBtn, lifetime);
         northPanel.add(graphColorBtn, graphColor);
+        northPanel.add(filelabel, fileLabelPos);
+        northPanel.add(fileText, filenamePos);
+
+
 
         mainPanel.add(BorderLayout.NORTH,northPanel);
+        mainPanel.add(BorderLayout.AFTER_LAST_LINE,northPanel2);
+
+
+
+       // mainPanel.add(panel2, BorderLayout.SOUTH);
 
         frame.add(mainPanel);
+
+    }
+
+    public void setTextBox(){
+
+
 
     }
 

@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -20,6 +19,7 @@ public class FileBuilder {
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(new JFrame());
         if (result == JFileChooser.APPROVE_OPTION) {
+
             return fileChooser.getSelectedFile();
 
         }
@@ -27,15 +27,8 @@ public class FileBuilder {
     }
 
 
-    public static void buildDot(File file){
-        SimpleNode node = null;
-        try {
-            node = TacParser.parseFile(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    public static void buildDot(SimpleNode node,File file){
+
         GeneratorCFG generatorCFG = new GeneratorCFG(node);
         generatorCFG.parseNodes();
         try {
@@ -46,17 +39,13 @@ public class FileBuilder {
         }
     }
 
-    public static void buildLifetime(File file){
+    public static LifetimeAnalysis buildLifetime(File file){
         SimpleNode node = null;
-        try {
-            node = TacParser.parseFile(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
 
 
+        LifetimeAnalysis lf = new LifetimeAnalysis(8, node);
+
+        return lf;
     }
 
 

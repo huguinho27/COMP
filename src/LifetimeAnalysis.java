@@ -170,4 +170,12 @@ public class LifetimeAnalysis {
 		}
 		return false;
 	}
+
+	public ArrayList<SimpleNode> getInstructions() {
+		return instructions;
+	}
+
+	public ArrayList<Variable> getVariables() {
+		return variables;
+	}
 }
