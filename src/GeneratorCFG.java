@@ -110,17 +110,21 @@ public class GeneratorCFG {
 
             out.write("digraph\n");
             out.write("{\n");
+            out.write( "node [margin=0 fontcolor=blue  shape=box style=filled]");
+			out.write("}\n");
+
+			out.write("}\n");
             String elseTo,to;
             for(int i=0; i < nodes.size() ;i++){
                 elseTo = nodes.get(i).elseEdge();
                 to = nodes.get(i).toEdge();
                 if( elseTo!= null) {
                     if (to != null)
-                        out.write(i + " -> " + to + "[label=\"true\"]" + "\n");
-                    out.write(i + " -> " + elseTo + "[label=\"false\"]" + "\n");
+                        out.write("\"" + i + ": " +nodes.get(i).getContent() + "\""  + " -> " + "\"" + to + ": " + nodes.get(Integer.parseInt(to)).getContent() + "\""  + "[label=\"true\"]" + "\n");
+                    out.write("\"" + i + ": " +nodes.get(i).getContent() + "\""  + " -> " + "\"" + elseTo + ": " +nodes.get(Integer.parseInt(elseTo)).getContent() + "\""   + "[label=\"false\"]" + "\n");
                 }else {
                     if (to != null)
-                        out.write(i + " -> " + to  + "\n");
+                        out.write("\""+ i + ": " + nodes.get(i).getContent() + "\"" + " -> " + "\""  + to + ": " + nodes.get(Integer.parseInt(to)).getContent()  + "\"" + "\n");
                 }
             }
             out.write("}\n");
