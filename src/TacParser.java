@@ -5,14 +5,14 @@ import java.io.IOException;
 
 public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacParserConstants {/*@bgen(jjtree)*/
   protected static JJTTacParserState jjtree = new JJTTacParserState();public static void main(String [] args) throws ParseException,
-  IOException
+  FileNotFoundException, IOException
   {
     if (args.length < 1)
     {
       System.out.println("Please pass in the filename for a parameter.");
       System.exit(1);
     }
-    System.out.println("Reading from file " + args[0]);
+    System.out.println("Reading from file " + "input2.txt");
     TacParser tacParser = new TacParser(new FileInputStream(args [0]));
     SimpleNode root = tacParser.Expression();
     function(root);
@@ -20,13 +20,21 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     LifetimeAnalysis lf = new LifetimeAnalysis(8, root);
     lf.printLifetime(root);
     lf.printLifetimeGraph(root);
-    TacToC cCode = new TacToC();
-    cCode.toCString(root);
+    TacToC tac = new TacToC();
+    tac.saveFIle(root);
   }
 
   public static void function(SimpleNode root)
   {
     root.dump("");
+  }
+   public static SimpleNode parseFile(File filePath) throws FileNotFoundException, ParseException {
+    TacParser tacParser = new TacParser(new FileInputStream(filePath));
+    return tacParser.Expression();
+  }
+
+  ublic TacParser(){
+
   }
 
   static final public SimpleNode Expression() throws ParseException {
@@ -37,26 +45,37 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     try {
       label_1:
       while (true) {
-        if (jj_2_1(2)) {
-          ExprPoint();
-          jj_consume_token(15);
+        if (jj_2_2(3)) {
+          if (jj_2_1(2)) {
+            ExprLabel();
+          } else {
+            ;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case VARIABLE:
+            Expr1();
+            break;
+          case IF:
+            ExprIf();
+            break;
+          case GOTO:
+            ExprGoto();
+            break;
+          default:
+            jj_la1[0] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
         } else {
-          ;
-        }
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case VARIABLE:
-          Expr1();
-          break;
-        case IF:
-          ExprIf();
-          break;
-        case GOTO:
-          ExprGoto();
-          break;
-        default:
-          jj_la1[0] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case VARIABLE:
+            ExprLabel();
+            break;
+          default:
+            jj_la1[1] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case IF:
@@ -65,7 +84,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
           ;
           break;
         default:
-          jj_la1[1] = jj_gen;
+          jj_la1[2] = jj_gen;
           break label_1;
         }
       }
@@ -93,6 +112,39 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     }
     }
     throw new Error("Missing return statement in function");
+  }
+
+  static final public void ExprLabel() throws ParseException {
+ /*@bgen(jjtree) Label */
+  SimpleNode jjtn000 = new SimpleNode(JJTLABEL);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);Token t;
+    try {
+      ExprVariable();
+      t = jj_consume_token(LABEL);
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+    System.out.println(t.image);
+    jjtn000.jjtSetValue(t.image);
+    } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      {if (true) throw (RuntimeException)jjte000;}
+    }
+    if (jjte000 instanceof ParseException) {
+      {if (true) throw (ParseException)jjte000;}
+    }
+    {if (true) throw (Error)jjte000;}
+    } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+    }
   }
 
   static final public void ExprPoint() throws ParseException {
@@ -184,7 +236,25 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
   jjtree.openNodeScope(jjtn000);Token t;
     try {
       ExprTerm();
-      t = jj_consume_token(LESSER);
+      if (jj_2_3(2)) {
+        t = jj_consume_token(LESSER);
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case LESSEQUAL:
+          t = jj_consume_token(LESSEQUAL);
+          break;
+        case GREATER:
+          t = jj_consume_token(GREATER);
+          break;
+        case GREATEQUAL:
+          t = jj_consume_token(GREATEQUAL);
+          break;
+        default:
+          jj_la1[3] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+      }
       ExprTerm();
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -218,7 +288,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     try {
       ExprVariable();
       t = jj_consume_token(ASSIGN);
-      if (jj_2_2(2)) {
+      if (jj_2_4(2)) {
         Expr2();
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -227,7 +297,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
           ExprTerm();
           break;
         default:
-          jj_la1[2] = jj_gen;
+          jj_la1[4] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -277,7 +347,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
         t = jj_consume_token(DIV);
         break;
       default:
-        jj_la1[3] = jj_gen;
+        jj_la1[5] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -316,7 +386,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
       t = jj_consume_token(VARIABLE);
       break;
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[6] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -326,7 +396,6 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     try {
     jjtree.closeNodeScope(jjtn001, true);
     jjtc001 = false;
-    System.out.println(t.image);
     jjtn001.jjtSetValue(t.image);
     } finally {
     if (jjtc001) {
@@ -366,8 +435,89 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_3() {
-    if (jj_3R_4()) return true;
+  static private boolean jj_2_3(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_3(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(2, xla); }
+  }
+
+  static private boolean jj_2_4(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_4(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(3, xla); }
+  }
+
+  static private boolean jj_3R_12() {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_9() {
+    if (jj_scan_token(IF)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_2() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(LABEL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_3R_11()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(11)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(12)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(13)) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3_4() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_7() {
+    if (jj_scan_token(VARIABLE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_8() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(ASSIGN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_4()) {
+    jj_scanpos = xsp;
+    if (jj_3R_12()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_5() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_10() {
+    if (jj_scan_token(GOTO)) return true;
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_3R_11()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(6)) {
@@ -383,29 +533,48 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     return false;
   }
 
-  static private boolean jj_3_2() {
-    if (jj_3R_3()) return true;
+  static private boolean jj_3R_4() {
+    if (jj_3R_9()) return true;
     return false;
   }
 
-  static private boolean jj_3R_4() {
+  static private boolean jj_3R_3() {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(13)) {
+    if (jj_scan_token(17)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(14)) return true;
+    if (jj_scan_token(18)) return true;
     }
-    return false;
-  }
-
-  static private boolean jj_3R_2() {
-    if (jj_scan_token(VARIABLE)) return true;
     return false;
   }
 
   static private boolean jj_3_1() {
     if (jj_3R_2()) return true;
-    if (jj_scan_token(15)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_1()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_3()) {
+    jj_scanpos = xsp;
+    if (jj_3R_4()) {
+    jj_scanpos = xsp;
+    if (jj_3R_5()) return true;
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3_3() {
+    if (jj_scan_token(LESSER)) return true;
     return false;
   }
 
@@ -421,15 +590,15 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[5];
+  static final private int[] jj_la1 = new int[7];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x5800,0x5800,0x6000,0x3c0,0x6000,};
+      jj_la1_0 = new int[] {0x58000,0x40000,0x58000,0x3800,0x60000,0x3c0,0x60000,};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[2];
+  static final private JJCalls[] jj_2_rtns = new JJCalls[4];
   static private boolean jj_rescan = false;
   static private int jj_gc = 0;
 
@@ -451,7 +620,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -467,7 +636,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -485,7 +654,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -497,7 +666,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -514,7 +683,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -525,7 +694,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -637,12 +806,12 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[16];
+    boolean[] la1tokens = new boolean[19];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 7; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -651,7 +820,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
         }
       }
     }
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 19; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
@@ -678,7 +847,7 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
 
   static private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 4; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -687,6 +856,8 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants, TacPar
           switch (i) {
             case 0: jj_3_1(); break;
             case 1: jj_3_2(); break;
+            case 2: jj_3_3(); break;
+            case 3: jj_3_4(); break;
           }
         }
         p = p.next;
