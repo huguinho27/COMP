@@ -1,7 +1,10 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.swing.filechooser.FileSystemView;
 
 public class TacToC
 {
@@ -75,7 +78,7 @@ public class TacToC
 		return newCcodeLine;
 	}
 
-	public String toCString(SimpleNode root) throws FileNotFoundException, IOException
+	public static String toCString(SimpleNode root) throws FileNotFoundException, IOException
 	{
 		String output = "";
 		String line = "";
@@ -94,7 +97,7 @@ public class TacToC
 		return toCCode(output);
 	}
 
-	private String parseNode(SimpleNode n)
+	private static String parseNode(SimpleNode n)
 	{
 
 		if (n.jjtGetValue().equals(":="))
@@ -116,10 +119,15 @@ public class TacToC
 		return "";
 	}
 
-	public void saveFIle(SimpleNode root) throws IOException
+	public static void saveFile(SimpleNode root, String name) throws IOException
 	{
+		
+		//toCString(root);
 		FileWriter out = null;
-		out = new FileWriter("output.c");
+		
+		File file = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "\\" + "tacParserOutput" + "\\");
+        
+        out = new FileWriter(file.getAbsolutePath() +  name + ".c");
 		out.write(toCString(root));
 		out.close();
 	}
