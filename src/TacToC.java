@@ -12,7 +12,7 @@ public class TacToC
 	{
 		ArrayList<String> declaredVariables = new ArrayList<String>();
 		
-		String newCcodeLine = "#include <stdio.h>\n" + "int main()\n{\n";
+		String newCcodeLine = "#include <stdio.h>\n" + "void main()\n{\n";
 
 		String line[] = input.split("\n");
 
@@ -74,7 +74,7 @@ public class TacToC
 			}
 			}
 		}
-		newCcodeLine += "\n}";
+		newCcodeLine += "return;\n}";
 		return newCcodeLine;
 	}
 
@@ -121,15 +121,26 @@ public class TacToC
 
 	public static void saveFile(SimpleNode root, String name) throws IOException
 	{
-		
-		//toCString(root);
 		FileWriter out = null;
 		
-		File file = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "\\" + "tacParserOutput" + "\\");
-        
-        out = new FileWriter(file.getAbsolutePath() +  name + ".c");
-		out.write(toCString(root));
-		out.close();
+		
+		try {
+
+			File file = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "\\"
+					+ "TacParserOutput" + "\\");
+			if (!file.exists())
+				file.mkdir();
+			
+
+	        out = new FileWriter(file.getAbsolutePath() +  "\\" + name + ".c");
+			out.write(toCString(root));
+			out.close();
+		} finally {
+
+			if (out != null) {
+				out.close();
+			}
+		}      
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, IOException

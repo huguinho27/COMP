@@ -31,16 +31,16 @@ public class TacParser/*@bgen(jjtree)*/implements TacParserTreeConstants/*@egen*
     if (file.exists())
     {
       fileInputStream = new FileInputStream(file);
+      TacParser tacParser = new TacParser(fileInputStream);
+      SimpleNode root = tacParser.Expression();
+      function(root);
+      System.out.println("\nLifetime Analysis:");
+      LifetimeAnalysis lf = new LifetimeAnalysis(8, root);
+      lf.printLifetime(root);
+      lf.printLifetimeGraph(root);  
     }
-    TacParser tacParser = new TacParser(fileInputStream);
-    SimpleNode root = tacParser.Expression();
-    function(root);
-    System.out.println("\nRegister Allocation:");
-    LifetimeAnalysis lf = new LifetimeAnalysis(8, root);
-    lf.printLifetime(root);
-    lf.printLifetimeGraph(root);
-    TacToC tac = new TacToC();
-    tac.saveFIle(root);
+    else 
+    System.out.println("ERROR: Please enter a valid file.");
   }
 
   public static void function(SimpleNode root)
@@ -166,7 +166,6 @@ void ExprLabel()        :
   }
 /*@egen*/
   {
-    System.out.println(t.image);
     jjtn000.jjtSetValue(t.image);
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {

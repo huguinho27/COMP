@@ -22,7 +22,6 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.graph.implementations.Graphs;
 
 public class GraphColoring extends JFrame {
-	private static final long serialVersionUID = 1L;
 	private LifetimeAnalysis lf;
 	private Graph graph;
 	private Graph tempGraph;
@@ -31,10 +30,11 @@ public class GraphColoring extends JFrame {
 	private Viewer viewer;
 	private View view;
 
-	public GraphColoring(int registers) throws FileNotFoundException, ParseException {
+	public GraphColoring(int registers, File filePath) throws FileNotFoundException, ParseException {
+		SimpleNode node = TacParser.parseFile(filePath);
+
 		DIR_PATH = System.getProperty("user.dir");
-		SimpleNode node = TacParser.parseFile(new File("C:\\Users\\João\\workspaceJava\\COMP P1\\bin\\input1.txt"));
-		LifetimeAnalysis lf = new LifetimeAnalysis(8, node);
+		LifetimeAnalysis lf = new LifetimeAnalysis(registers, node);
 
 		this.lf = lf;
 
@@ -42,10 +42,6 @@ public class GraphColoring extends JFrame {
 		kColoring(registers);
 		lf.printLifetimeGraph(node);
 
-	}
-
-	public static void main(String[] args) throws FileNotFoundException, ParseException {
-		new GraphColoring(4);
 	}
 
 	public void init() {
@@ -56,7 +52,15 @@ public class GraphColoring extends JFrame {
 
 		graph.addAttribute("ui.quality");
 		graph.addAttribute("ui.antialias");
-		graph.setAttribute("ui.stylesheet", getPath());
+		graph.setAttribute("ui.stylesheet",
+				"node {" + "size: 35px, 35px;" + "fill-mode: dyn-plain;" + "text-size: 20px;" + "text-color: white;"
+						+ "text-background-color:red;" + "}" + "node.black" + "{" + "fill-color:black;" + "}"
+						+ "node.orange" + "{" + "fill-color:orange;" + "}" + "node.lightBlue" + "{"
+						+ "fill-color:lightBlue;" + "}" + "node.purple" + "{" + "fill-color:#663399;" + "}"
+						+ "node.green" + "{" + "fill-color: green;" + "}node.red" + "{" + "fill-color: red;"
+						+ "}node.blue" + "{" + "fill-color: blue;" + "}node.grey" + "{" + "fill-color:#A9A9A9;"
+						+ "}node.pink" + "{" + "fill-color:#FF1493;" + "}node.brown" + "{" + "fill-color:#A52A2A;"
+						+ "}node.forestGreen" + "{" + "fill-color:#228B22;" + "}");
 
 		ArrayList<Variable> variables = lf.getVariables();
 
@@ -104,7 +108,6 @@ public class GraphColoring extends JFrame {
 			org.graphstream.graph.Node n = tempGraph.getNode(i);
 			int degree = n.getDegree();
 
-			System.out.println(n.getAttribute("ui.label") + " - " + degree);
 			if (degree < k) {
 				stack.push(n);
 				tempGraph.removeNode(n);
@@ -116,7 +119,6 @@ public class GraphColoring extends JFrame {
 			org.graphstream.graph.Node temp = stack.pop();
 			org.graphstream.graph.Node n = graph.getNode(temp.getId());
 
-			System.out.println(n.getAttribute("ui.label")+ ":");
 			int numColored = 0;
 			Iterator<Edge> it2 = n.getEachEdge().iterator();
 			while (it2.hasNext()) {
@@ -125,7 +127,7 @@ public class GraphColoring extends JFrame {
 				org.graphstream.graph.Node n2 = e.getNode0();
 				if (n2.getId() == n.getId())
 					n2 = e.getNode1();
-				
+
 				if ((int) n2.getAttribute("color") != -1)
 					numColored++;
 			}
@@ -139,9 +141,7 @@ public class GraphColoring extends JFrame {
 		for (int i = 0; i < graph.getNodeCount(); i++) {
 			org.graphstream.graph.Node n = graph.getNode(i);
 			int color = (int) n.getAttribute("color");
-			System.out.println(n.getAttribute("ui.label") + " - " + color);
-			
-			
+
 			switch (color) {
 			case 0:
 				n.setAttribute("ui.class", "orange");
@@ -180,7 +180,7 @@ public class GraphColoring extends JFrame {
 	public String getPath() {
 		String cssFile;
 
-		cssFile = DIR_PATH + "\\bin\\graph.css";
+		cssFile = DIR_PATH + "\\css\\graph.css";
 
 		return fileToString(cssFile);
 	}
