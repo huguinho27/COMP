@@ -30,7 +30,7 @@ public class GeneratorCFG {
 
 			SimpleNode n = (SimpleNode) root.jjtGetChild(i);
 
-			if (parseNode(n, nodeCFG, contador)) {
+			if (parseNode(n, nodeCFG, contador, i == (root.jjtGetNumChildren() - 1))) {
 
 				if (i != root.jjtGetNumChildren() - 1)
 					nodeCFG.setTo(Integer.toString(contador + 1));
@@ -45,14 +45,22 @@ public class GeneratorCFG {
 
 	}
 
-	private boolean parseNode(SimpleNode n, NodeCFG nodeCFG, int i) {
+	private boolean parseNode(SimpleNode n, NodeCFG nodeCFG, int i,boolean last) {
 
 		if (n.jjtGetValue().equals(":="))
 			nodeCFG.setContent(SimpleNode.equalsNode(n));
 		else if (n.jjtGetValue().equals(":")) {
-			labels.add(SimpleNode.parseLabel(n));
-			labelsInt.add(i);
-			return false;
+			if (last) {
+				labels.add(SimpleNode.parseLabel(n));
+				labelsInt.add(i);
+				nodeCFG.setContent(SimpleNode.parseLabel(n));
+			} else {
+				labels.add(SimpleNode.parseLabel(n));
+				labelsInt.add(i);
+				return false;
+
+			}
+		
 		} else if (n.jjtGetValue().equals("if")) {
 			nodeCFG.setTo_else((String) ((SimpleNode) ((SimpleNode) n.jjtGetChild(1)).jjtGetChild(0)).jjtGetValue());
 			nodeCFG.setContent("if " + " " + SimpleNode.parseOperator((SimpleNode) n.jjtGetChild(0)));
@@ -101,9 +109,7 @@ public class GeneratorCFG {
 			out.write("digraph\n");
 			out.write("{\n");
 			out.write("node [margin=0 fontcolor=blue  shape=box style=filled]");
-			out.write("}\n");
-
-			out.write("}\n");
+			
 			String elseTo, to;
 			for (int i = 0; i < nodes.size(); i++) {
 				elseTo = nodes.get(i).elseEdge();
